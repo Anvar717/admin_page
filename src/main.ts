@@ -3,5 +3,8 @@ import './style.css'
 import './assets/admin-ui.css'
 import App from './App.vue'
 import router from './router'
+import i18n, { getSavedLocale } from './i18n'
 
-createApp(App).use(router).mount('#app')
+document.documentElement.lang = getSavedLocale()
+
+createApp(App).use(router).use(i18n).mount('#app')

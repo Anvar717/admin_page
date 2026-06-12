@@ -9,8 +9,10 @@ import {
   Bell,
   Check,
   CheckCircle2,
+  ChevronDown,
   Clock,
   Eye,
+  Globe,
   EyeOff,
   LayoutDashboard,
   LineChart,
@@ -72,6 +74,8 @@ export type IconName =
   | 'close'
   | 'activity'
   | 'chart'
+  | 'globe'
+  | 'chevron-down'
 
 const props = withDefaults(
   defineProps<{
@@ -120,6 +124,8 @@ const icons: Record<IconName, Component> = {
   close: X,
   activity: Activity,
   chart: BarChart3,
+  globe: Globe,
+  'chevron-down': ChevronDown,
 }
 </script>
 

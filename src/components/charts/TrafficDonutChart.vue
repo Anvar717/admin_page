@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { ChartConfiguration } from 'chart.js'
 import ChartCanvas from './ChartCanvas.vue'
 import { chartPlugins, getChartColors } from '../../composables/useChartTheme'
 
-const labels = ['Google', 'Instagram', 'Telegram', 'Boshqalar']
+const { t, locale } = useI18n()
+
+const sourceKeys = ['google', 'instagram', 'telegram', 'others'] as const
 const values = [45, 30, 15, 10]
 
 const config = computed(() => {
   const colors = getChartColors()
+  const labels = sourceKeys.map((key) => t(`analytics.${key}`))
 
   return {
     type: 'doughnut',
@@ -41,7 +45,7 @@ const config = computed(() => {
 </script>
 
 <template>
-  <ChartCanvas :config="config" class="donut-chart" />
+  <ChartCanvas :key="locale" :config="config" class="donut-chart" />
 </template>
 
 <style scoped>

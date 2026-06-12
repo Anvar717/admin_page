@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { ChartConfiguration } from 'chart.js'
 import ChartCanvas from './ChartCanvas.vue'
 import { cartesianScales, chartPlugins, getChartColors } from '../../composables/useChartTheme'
+
+const { t, locale } = useI18n()
 
 const labels = ['Smartfon X1', 'Noutbuk Pro', 'Naushnik Z', 'Planshet Air']
 const data = [124, 89, 256, 67]
@@ -16,7 +19,7 @@ const config = computed(() => {
       labels,
       datasets: [
         {
-          label: 'Sotuvlar',
+          label: t('analytics.sales'),
           data,
           borderRadius: 6,
           backgroundColor: colors.palette,
@@ -42,5 +45,5 @@ const config = computed(() => {
 </script>
 
 <template>
-  <ChartCanvas :config="config" />
+  <ChartCanvas :key="locale" :config="config" />
 </template>

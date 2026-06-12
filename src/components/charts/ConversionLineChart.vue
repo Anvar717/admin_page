@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { ChartConfiguration } from 'chart.js'
 import ChartCanvas from './ChartCanvas.vue'
 import { cartesianScales, chartPlugins, getChartColors } from '../../composables/useChartTheme'
 
-const labels = ['1-hafta', '2-hafta', '3-hafta', '4-hafta']
+const { t, locale } = useI18n()
+
+const weekKeys = ['week1', 'week2', 'week3', 'week4'] as const
 const conversion = [2.1, 2.8, 3.0, 3.2]
 const visitors = [1200, 1450, 1380, 1620]
 
 const config = computed(() => {
   const colors = getChartColors()
+  const labels = weekKeys.map((key) => t(`analytics.${key}`))
 
   return {
     type: 'line',
@@ -17,7 +21,7 @@ const config = computed(() => {
       labels,
       datasets: [
         {
-          label: 'Konversiya (%)',
+          label: `${t('analytics.conversion')} (%)`,
           data: conversion,
           yAxisID: 'y',
           tension: 0.4,
@@ -28,7 +32,7 @@ const config = computed(() => {
           pointBackgroundColor: '#8b5cf6',
         },
         {
-          label: 'Tashriflar',
+          label: t('analytics.visits'),
           data: visitors,
           yAxisID: 'y1',
           tension: 0.4,
@@ -74,5 +78,5 @@ const config = computed(() => {
 </script>
 
 <template>
-  <ChartCanvas :config="config" />
+  <ChartCanvas :key="locale" :config="config" />
 </template>

@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import AppIcon, { type IconName } from '../../components/icons/AppIcon.vue'
 import OrderEditModal, { type Order } from '../../components/admin/OrderEditModal.vue'
 import OrderDeleteModal from '../../components/admin/OrderDeleteModal.vue'
 import { statusClass, useOrders } from '../../composables/useOrders'
 
+const { t } = useI18n()
 const { orders, updateOrder, deleteOrder } = useOrders()
 
-const miniStats: { label: string; value: string; icon: IconName }[] = [
-  { label: 'Yangi', value: '24', icon: 'new' },
-  { label: 'Jarayonda', value: '18', icon: 'clock' },
-  { label: 'Yakunlangan', value: '312', icon: 'check-circle' },
+const miniStats: { labelKey: string; value: string; icon: IconName }[] = [
+  { labelKey: 'common.newItem', value: '24', icon: 'new' },
+  { labelKey: 'common.inProgress', value: '18', icon: 'clock' },
+  { labelKey: 'common.completed', value: '312', icon: 'check-circle' },
 ]
 
 const editModalOpen = ref(false)
@@ -53,9 +55,9 @@ function confirmDelete() {
 <template>
   <div class="admin-page">
     <section class="mini-stats">
-      <article v-for="stat in miniStats" :key="stat.label" class="ui-stat-card">
+      <article v-for="stat in miniStats" :key="stat.labelKey" class="ui-stat-card">
         <div class="ui-stat-top">
-          <p class="ui-stat-label">{{ stat.label }}</p>
+          <p class="ui-stat-label">{{ t(stat.labelKey) }}</p>
           <span class="ui-stat-icon">
             <AppIcon :name="stat.icon" :size="20" />
           </span>
@@ -65,10 +67,10 @@ function confirmDelete() {
     </section>
 
     <div class="page-toolbar">
-      <p class="toolbar-info">{{ orders.length }} ta buyurtma</p>
+      <p class="toolbar-info">{{ t('orders.count', { n: orders.length }) }}</p>
       <RouterLink :to="{ name: 'order-create' }" class="create-btn">
         <AppIcon name="plus" :size="16" />
-        Yangi buyurtma
+        {{ t('orders.newOrder') }}
       </RouterLink>
     </div>
 
@@ -77,40 +79,40 @@ function confirmDelete() {
         <table class="ui-table">
           <thead>
             <tr>
-              <th>Buyurtma ID</th>
-              <th>Mijoz</th>
-              <th>Mahsulot</th>
-              <th>Summa</th>
-              <th>Holat</th>
-              <th>Amallar</th>
+              <th>{{ t('orders.colOrderId') }}</th>
+              <th>{{ t('orders.colCustomer') }}</th>
+              <th>{{ t('orders.colProduct') }}</th>
+              <th>{{ t('orders.colAmount') }}</th>
+              <th>{{ t('orders.colStatus') }}</th>
+              <th>{{ t('common.actions') }}</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="orders.length === 0">
               <td colspan="6" class="empty-cell">
-                Buyurtmalar yo'q.
-                <RouterLink :to="{ name: 'order-create' }">Birinchi buyurtmani yarating</RouterLink>
+                {{ t('orders.empty') }}
+                <RouterLink :to="{ name: 'order-create' }">{{ t('orders.createFirst') }}</RouterLink>
               </td>
             </tr>
             <tr v-for="order in orders" :key="order.id">
               <td><strong>{{ order.id }}</strong></td>
               <td>{{ order.customer }}</td>
               <td>{{ order.product }}</td>
-              <td>{{ order.amount }} so'm</td>
+              <td>{{ order.amount }} {{ t('common.currency') }}</td>
               <td>
                 <span class="ui-badge" :class="statusClass[order.status]">
-                  {{ order.status }}
+                  {{ t(`status.${order.status}`) }}
                 </span>
               </td>
               <td>
                 <div class="action-btns">
                   <button type="button" class="action-btn edit" @click="openEdit(order)">
                     <AppIcon name="edit" :size="15" />
-                    Tahrirlash
+                    {{ t('common.edit') }}
                   </button>
                   <button type="button" class="action-btn delete" @click="openDelete(order)">
                     <AppIcon name="delete" :size="15" />
-                    O'chirish
+                    {{ t('common.delete') }}
                   </button>
                 </div>
               </td>

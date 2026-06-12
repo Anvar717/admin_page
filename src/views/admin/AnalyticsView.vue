@@ -1,14 +1,17 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import TrafficDonutChart from '../../components/charts/TrafficDonutChart.vue'
 import ProductsBarChart from '../../components/charts/ProductsBarChart.vue'
 import ConversionLineChart from '../../components/charts/ConversionLineChart.vue'
 import AppIcon, { type IconName } from '../../components/icons/AppIcon.vue'
 
-const metrics: { label: string; value: string; icon: IconName }[] = [
-  { label: 'Konversiya', value: '3.2%', icon: 'conversion' },
-  { label: "O'rtacha buyurtma", value: "785,000 so'm", icon: 'cart' },
-  { label: 'Qaytish foizi', value: '24%', icon: 'repeat' },
-  { label: 'Yangi mijozlar', value: '156', icon: 'sparkles' },
+const { t } = useI18n()
+
+const metrics: { labelKey: string; value: string; icon: IconName }[] = [
+  { labelKey: 'analytics.conversion', value: '3.2%', icon: 'conversion' },
+  { labelKey: 'analytics.avgOrder', value: `785,000 ${t('common.currency')}`, icon: 'cart' },
+  { labelKey: 'analytics.returnRate', value: '24%', icon: 'repeat' },
+  { labelKey: 'analytics.newCustomers', value: '156', icon: 'sparkles' },
 ]
 
 const topProducts = [
@@ -22,9 +25,9 @@ const topProducts = [
 <template>
   <div class="admin-page">
     <section class="ui-stat-grid">
-      <article v-for="metric in metrics" :key="metric.label" class="ui-stat-card">
+      <article v-for="metric in metrics" :key="metric.labelKey" class="ui-stat-card">
         <div class="ui-stat-top">
-          <p class="ui-stat-label">{{ metric.label }}</p>
+          <p class="ui-stat-label">{{ t(metric.labelKey) }}</p>
           <span class="ui-stat-icon">
             <AppIcon :name="metric.icon" :size="20" />
           </span>
@@ -37,8 +40,8 @@ const topProducts = [
       <div class="ui-card-body">
         <div class="chart-card-header">
           <div>
-            <h3>Konversiya va tashriflar</h3>
-            <p>Oylik dinamika</p>
+            <h3>{{ t('analytics.conversionVisits') }}</h3>
+            <p>{{ t('analytics.monthlyDynamics') }}</p>
           </div>
         </div>
         <ConversionLineChart />
@@ -50,8 +53,8 @@ const topProducts = [
         <div class="ui-card-body">
           <div class="chart-card-header">
             <div>
-              <h3>Trafik manbalari</h3>
-              <p>Foydalanuvchilar qayerdan keladi</p>
+              <h3>{{ t('analytics.trafficSources') }}</h3>
+              <p>{{ t('analytics.trafficDesc') }}</p>
             </div>
           </div>
           <TrafficDonutChart />
@@ -62,8 +65,8 @@ const topProducts = [
         <div class="ui-card-body">
           <div class="chart-card-header">
             <div>
-              <h3>Top mahsulotlar</h3>
-              <p>Sotuvlar bo'yicha</p>
+              <h3>{{ t('analytics.topProducts') }}</h3>
+              <p>{{ t('analytics.salesBy') }}</p>
             </div>
           </div>
           <ProductsBarChart />
@@ -74,14 +77,14 @@ const topProducts = [
     <article class="ui-card">
       <div class="ui-card-body">
         <div class="ui-card-header">
-          <h3>Mahsulotlar reytingi</h3>
+          <h3>{{ t('analytics.productRanking') }}</h3>
         </div>
         <ul class="product-list">
           <li v-for="(product, index) in topProducts" :key="product.name">
             <span class="rank">{{ index + 1 }}</span>
             <div class="product-info">
               <strong>{{ product.name }}</strong>
-              <span>{{ product.sales }} ta sotuv · {{ product.revenue }}</span>
+              <span>{{ product.sales }} {{ t('analytics.salesUnit') }} · {{ product.revenue }}</span>
             </div>
             <div class="product-bar">
               <div :style="{ width: `${(product.sales / 256) * 100}%` }" />

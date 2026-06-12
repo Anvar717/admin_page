@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AppIcon from '../icons/AppIcon.vue'
-import { statusOptions, type Order } from '../../composables/useOrders'
+import { statusOptions, type Order, type OrderStatus } from '../../composables/useOrders'
 
 export type { Order }
 
@@ -15,12 +16,14 @@ const emit = defineEmits<{
   save: [order: Order]
 }>()
 
+const { t } = useI18n()
+
 const form = ref<Order>({
   id: '',
   customer: '',
   product: '',
   amount: '',
-  status: 'Yangi',
+  status: 'new',
 })
 
 const selectedStatus = computed(
@@ -47,6 +50,10 @@ function handleBackdropClick(event: MouseEvent) {
     emit('close')
   }
 }
+
+function setStatus(status: OrderStatus) {
+  form.value.status = status
+}
 </script>
 
 <template>
@@ -61,11 +68,11 @@ function handleBackdropClick(event: MouseEvent) {
               <AppIcon name="edit" :size="20" />
             </div>
             <div>
-              <h2 id="modal-title">Buyurtmani tahrirlash</h2>
+              <h2 id="modal-title">{{ t('orders.editTitle') }}</h2>
               <span class="order-id">{{ form.id }}</span>
             </div>
           </div>
-          <button type="button" class="close-btn" aria-label="Yopish" @click="emit('close')">
+          <button type="button" class="close-btn" :aria-label="t('common.cancel')" @click="emit('close')">
             <AppIcon name="close" :size="18" />
           </button>
         </div>
@@ -75,35 +82,35 @@ function handleBackdropClick(event: MouseEvent) {
             <label class="field">
               <span class="field-label">
                 <AppIcon name="user" :size="14" />
-                Mijoz
+                {{ t('orders.customer') }}
               </span>
-              <input v-model="form.customer" type="text" placeholder="Mijoz ismi" required />
+              <input v-model="form.customer" type="text" :placeholder="t('orders.customerPlaceholder')" required />
             </label>
 
             <label class="field">
               <span class="field-label">
                 <AppIcon name="orders" :size="14" />
-                Mahsulot
+                {{ t('orders.product') }}
               </span>
-              <input v-model="form.product" type="text" placeholder="Mahsulot nomi" required />
+              <input v-model="form.product" type="text" :placeholder="t('orders.productPlaceholder')" required />
             </label>
           </div>
 
           <label class="field">
             <span class="field-label">
               <AppIcon name="revenue" :size="14" />
-              Summa
+              {{ t('orders.amount') }}
             </span>
             <div class="amount-input">
-              <input v-model="form.amount" type="text" placeholder="0" required />
-              <span class="currency">so'm</span>
+              <input v-model="form.amount" type="text" :placeholder="t('orders.amountPlaceholder')" required />
+              <span class="currency">{{ t('common.currency') }}</span>
             </div>
           </label>
 
           <div class="field">
             <span class="field-label">
               <AppIcon name="activity" :size="14" />
-              Holat
+              {{ t('orders.status') }}
             </span>
             <div class="status-grid">
               <button
@@ -112,40 +119,40 @@ function handleBackdropClick(event: MouseEvent) {
                 type="button"
                 class="status-pill"
                 :class="[status.class, { active: form.status === status.value }]"
-                @click="form.status = status.value"
+                @click="setStatus(status.value)"
               >
-                {{ status.value }}
+                {{ t(`status.${status.value}`) }}
               </button>
             </div>
           </div>
 
           <div class="preview-card">
-            <p class="preview-label">Ko'rib chiqish</p>
+            <p class="preview-label">{{ t('common.preview') }}</p>
             <div class="preview-row">
-              <span>Mijoz</span>
+              <span>{{ t('orders.customer') }}</span>
               <strong>{{ form.customer || '—' }}</strong>
             </div>
             <div class="preview-row">
-              <span>Mahsulot</span>
+              <span>{{ t('orders.product') }}</span>
               <strong>{{ form.product || '—' }}</strong>
             </div>
             <div class="preview-row">
-              <span>Summa</span>
-              <strong>{{ form.amount ? `${form.amount} so'm` : '—' }}</strong>
+              <span>{{ t('orders.amount') }}</span>
+              <strong>{{ form.amount ? `${form.amount} ${t('common.currency')}` : '—' }}</strong>
             </div>
             <div class="preview-row">
-              <span>Holat</span>
-              <span class="ui-badge" :class="selectedStatus.class">{{ form.status }}</span>
+              <span>{{ t('orders.status') }}</span>
+              <span class="ui-badge" :class="selectedStatus.class">{{ t(`status.${form.status}`) }}</span>
             </div>
           </div>
 
           <div class="modal-footer">
             <button type="button" class="btn-secondary" @click="emit('close')">
-              Bekor qilish
+              {{ t('common.cancel') }}
             </button>
             <button type="submit" class="btn-primary">
               <AppIcon name="save" :size="16" />
-              Saqlash
+              {{ t('common.save') }}
             </button>
           </div>
         </form>

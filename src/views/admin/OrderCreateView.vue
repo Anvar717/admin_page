@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import AppIcon from '../../components/icons/AppIcon.vue'
-import { statusOptions, useOrders } from '../../composables/useOrders'
+import { statusOptions, useOrders, type OrderStatus } from '../../composables/useOrders'
 
 const router = useRouter()
+const { t } = useI18n()
 const { generateOrderId, addOrder } = useOrders()
 
 const form = ref({
   customer: '',
   product: '',
   amount: '',
-  status: 'Yangi',
+  status: 'new' as OrderStatus,
 })
 
 const orderId = computed(() => generateOrderId())
@@ -34,6 +36,10 @@ function handleSubmit() {
 function handleCancel() {
   router.push({ name: 'orders' })
 }
+
+function setStatus(status: OrderStatus) {
+  form.value.status = status
+}
 </script>
 
 <template>
@@ -41,11 +47,11 @@ function handleCancel() {
     <div class="page-top">
       <button type="button" class="back-btn" @click="handleCancel">
         <AppIcon name="arrow-left" :size="16" />
-        Orqaga
+        {{ t('common.back') }}
       </button>
       <div class="page-title">
-        <h2>Yangi buyurtma</h2>
-        <p>Buyurtma ma'lumotlarini kiriting</p>
+        <h2>{{ t('orders.createPageTitle') }}</h2>
+        <p>{{ t('orders.createPageDesc') }}</p>
       </div>
     </div>
 
@@ -58,7 +64,7 @@ function handleCancel() {
             <AppIcon name="plus" :size="22" />
           </div>
           <div>
-            <h3>Buyurtma berish</h3>
+            <h3>{{ t('orders.createTitle') }}</h3>
             <span class="order-id">{{ orderId }}</span>
           </div>
         </div>
@@ -68,12 +74,12 @@ function handleCancel() {
             <label class="field">
               <span class="field-label">
                 <AppIcon name="user" :size="14" />
-                Mijoz
+                {{ t('orders.customer') }}
               </span>
               <input
                 v-model="form.customer"
                 type="text"
-                placeholder="Mijoz ismini kiriting"
+                :placeholder="t('orders.customerPlaceholder')"
                 required
               />
             </label>
@@ -81,12 +87,12 @@ function handleCancel() {
             <label class="field">
               <span class="field-label">
                 <AppIcon name="orders" :size="14" />
-                Mahsulot
+                {{ t('orders.product') }}
               </span>
               <input
                 v-model="form.product"
                 type="text"
-                placeholder="Mahsulot nomi"
+                :placeholder="t('orders.productPlaceholder')"
                 required
               />
             </label>
@@ -95,23 +101,23 @@ function handleCancel() {
           <label class="field">
             <span class="field-label">
               <AppIcon name="revenue" :size="14" />
-              Summa
+              {{ t('orders.amount') }}
             </span>
             <div class="amount-input">
               <input
                 v-model="form.amount"
                 type="text"
-                placeholder="Masalan: 1,500,000"
+                :placeholder="t('orders.amountPlaceholder')"
                 required
               />
-              <span class="currency">so'm</span>
+              <span class="currency">{{ t('common.currency') }}</span>
             </div>
           </label>
 
           <div class="field">
             <span class="field-label">
               <AppIcon name="activity" :size="14" />
-              Holat
+              {{ t('orders.status') }}
             </span>
             <div class="status-grid">
               <button
@@ -120,53 +126,53 @@ function handleCancel() {
                 type="button"
                 class="status-pill"
                 :class="[status.class, { active: form.status === status.value }]"
-                @click="form.status = status.value"
+                @click="setStatus(status.value)"
               >
-                {{ status.value }}
+                {{ t(`status.${status.value}`) }}
               </button>
             </div>
           </div>
 
           <div class="form-actions">
             <button type="button" class="btn-secondary" @click="handleCancel">
-              Bekor qilish
+              {{ t('common.cancel') }}
             </button>
             <button type="submit" class="btn-primary">
               <AppIcon name="plus" :size="16" />
-              Buyurtma yaratish
+              {{ t('orders.createSubmit') }}
             </button>
           </div>
         </form>
       </article>
 
       <aside class="preview-card">
-        <h4>Ko'rib chiqish</h4>
-        <p class="preview-desc">Yaratilgandan keyin ro'yxatga qo'shiladi</p>
+        <h4>{{ t('common.preview') }}</h4>
+        <p class="preview-desc">{{ t('orders.createPreviewDesc') }}</p>
 
         <div class="preview-item">
-          <span>Buyurtma ID</span>
+          <span>{{ t('orders.colOrderId') }}</span>
           <strong>{{ orderId }}</strong>
         </div>
         <div class="preview-item">
-          <span>Mijoz</span>
+          <span>{{ t('orders.customer') }}</span>
           <strong>{{ form.customer || '—' }}</strong>
         </div>
         <div class="preview-item">
-          <span>Mahsulot</span>
+          <span>{{ t('orders.product') }}</span>
           <strong>{{ form.product || '—' }}</strong>
         </div>
         <div class="preview-item">
-          <span>Summa</span>
-          <strong>{{ form.amount ? `${form.amount} so'm` : '—' }}</strong>
+          <span>{{ t('orders.amount') }}</span>
+          <strong>{{ form.amount ? `${form.amount} ${t('common.currency')}` : '—' }}</strong>
         </div>
         <div class="preview-item">
-          <span>Holat</span>
-          <span class="ui-badge" :class="selectedStatus.class">{{ form.status }}</span>
+          <span>{{ t('orders.status') }}</span>
+          <span class="ui-badge" :class="selectedStatus.class">{{ t(`status.${form.status}`) }}</span>
         </div>
 
         <div class="preview-tip">
           <AppIcon name="check-circle" :size="16" />
-          Barcha maydonlar to'ldirilgandan keyin yaratish mumkin
+          {{ t('orders.createTip') }}
         </div>
       </aside>
     </div>

@@ -1,44 +1,47 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import RevenueAreaChart from '../../components/charts/RevenueAreaChart.vue'
 import OrdersBarChart from '../../components/charts/OrdersBarChart.vue'
 import StatusDonutChart from '../../components/charts/StatusDonutChart.vue'
 import AppIcon, { type IconName } from '../../components/icons/AppIcon.vue'
 
-const stats: { label: string; value: string; change: string; up: boolean; icon: IconName }[] = [
-  { label: 'Jami foydalanuvchilar', value: '1,248', change: '+12%', up: true, icon: 'users' },
-  { label: 'Buyurtmalar', value: '356', change: '+8%', up: true, icon: 'orders' },
-  { label: 'Daromad', value: '24.5M', change: '+23%', up: true, icon: 'revenue' },
-  { label: 'Faol sessiyalar', value: '89', change: '-3%', up: false, icon: 'sessions' },
+const { t } = useI18n()
+
+const stats: { labelKey: string; value: string; change: string; up: boolean; icon: IconName }[] = [
+  { labelKey: 'dashboard.totalUsers', value: '1,248', change: '+12%', up: true, icon: 'users' },
+  { labelKey: 'dashboard.orders', value: '356', change: '+8%', up: true, icon: 'orders' },
+  { labelKey: 'dashboard.revenue', value: '24.5M', change: '+23%', up: true, icon: 'revenue' },
+  { labelKey: 'dashboard.activeSessions', value: '89', change: '-3%', up: false, icon: 'sessions' },
 ]
 
 const recentOrders = [
-  { id: '#1024', user: 'Ali Valiyev', amount: '450,000', status: 'Yangi', statusClass: 'info', date: '11.06.2026' },
-  { id: '#1023', user: 'Dilnoza Karimova', amount: '1,200,000', status: 'Tasdiqlangan', statusClass: 'purple', date: '11.06.2026' },
-  { id: '#1022', user: 'Jasur Rahimov', amount: '320,000', status: 'Yetkazilmoqda', statusClass: 'warning', date: '10.06.2026' },
-  { id: '#1021', user: 'Nodira Saidova', amount: '890,000', status: 'Bekor qilingan', statusClass: 'danger', date: '10.06.2026' },
+  { id: '#1024', user: 'Ali Valiyev', amount: '450,000', status: 'new', statusClass: 'info', date: '11.06.2026' },
+  { id: '#1023', user: 'Dilnoza Karimova', amount: '1,200,000', status: 'confirmed', statusClass: 'purple', date: '11.06.2026' },
+  { id: '#1022', user: 'Jasur Rahimov', amount: '320,000', status: 'shipping', statusClass: 'warning', date: '10.06.2026' },
+  { id: '#1021', user: 'Nodira Saidova', amount: '890,000', status: 'cancelled', statusClass: 'danger', date: '10.06.2026' },
 ]
 
 const activities = [
-  { text: 'Yangi foydalanuvchi ro\'yxatdan o\'tdi', time: '5 daqiqa oldin' },
-  { text: '#1024 buyurtma yaratildi', time: '12 daqiqa oldin' },
-  { text: 'Tizim yangilanishi muvaffaqiyatli', time: '1 soat oldin' },
-  { text: '3 ta buyurtma yetkazildi', time: '2 soat oldin' },
+  { textKey: 'dashboard.activity1', timeKey: 'dashboard.minutesAgo', timeVal: '5' },
+  { textKey: 'dashboard.activity2', timeKey: 'dashboard.minutesAgo', timeVal: '12' },
+  { textKey: 'dashboard.activity3', timeKey: 'dashboard.hourAgo', timeVal: '1' },
+  { textKey: 'dashboard.activity4', timeKey: 'dashboard.hoursAgo', timeVal: '2' },
 ]
 </script>
 
 <template>
   <div class="admin-page">
     <section class="ui-stat-grid">
-      <article v-for="stat in stats" :key="stat.label" class="ui-stat-card">
+      <article v-for="stat in stats" :key="stat.labelKey" class="ui-stat-card">
         <div class="ui-stat-top">
-          <p class="ui-stat-label">{{ stat.label }}</p>
+          <p class="ui-stat-label">{{ t(stat.labelKey) }}</p>
           <span class="ui-stat-icon">
             <AppIcon :name="stat.icon" :size="20" />
           </span>
         </div>
         <h2 class="ui-stat-value">{{ stat.value }}</h2>
         <span class="ui-stat-change" :class="{ down: !stat.up }">
-          {{ stat.change }} o'tgan oyga nisbatan
+          {{ stat.change }} {{ t('common.comparedToLastMonth') }}
         </span>
       </article>
     </section>
@@ -48,10 +51,10 @@ const activities = [
         <div class="ui-card-body">
           <div class="chart-card-header">
             <div>
-              <h3>Oylik daromad</h3>
-              <p>Yillik daromad dinamikasi</p>
+              <h3>{{ t('dashboard.monthlyRevenue') }}</h3>
+              <p>{{ t('dashboard.yearlyDynamics') }}</p>
             </div>
-            <span class="chart-badge">+23% o'sish</span>
+            <span class="chart-badge">+23% {{ t('dashboard.growth') }}</span>
           </div>
           <RevenueAreaChart />
         </div>
@@ -61,8 +64,8 @@ const activities = [
         <div class="ui-card-body">
           <div class="chart-card-header">
             <div>
-              <h3>Buyurtma holati</h3>
-              <p>Joriy taqsimot</p>
+              <h3>{{ t('dashboard.orderStatus') }}</h3>
+              <p>{{ t('dashboard.currentDistribution') }}</p>
             </div>
           </div>
           <StatusDonutChart />
@@ -75,10 +78,10 @@ const activities = [
         <div class="ui-card-body">
           <div class="chart-card-header">
             <div>
-              <h3>Haftalik buyurtmalar</h3>
-              <p>Kunlik statistika</p>
+              <h3>{{ t('dashboard.weeklyOrders') }}</h3>
+              <p>{{ t('dashboard.dailyStats') }}</p>
             </div>
-            <span class="chart-total">Jami: 409</span>
+            <span class="chart-total">{{ t('common.total') }}: 409</span>
           </div>
           <OrdersBarChart />
         </div>
@@ -88,16 +91,16 @@ const activities = [
         <div class="ui-card-body">
           <div class="chart-card-header">
             <div>
-              <h3>So'nggi faoliyat</h3>
-              <p>Real vaqt yangilanishlar</p>
+              <h3>{{ t('dashboard.recentActivity') }}</h3>
+              <p>{{ t('dashboard.realtimeUpdates') }}</p>
             </div>
           </div>
           <div class="activity-list">
             <div v-for="(item, i) in activities" :key="i" class="activity-item">
               <span class="activity-dot" />
               <div>
-                <p>{{ item.text }}</p>
-                <span>{{ item.time }}</span>
+                <p>{{ t(item.textKey) }}</p>
+                <span>{{ item.timeVal }} {{ t(item.timeKey) }}</span>
               </div>
             </div>
           </div>
@@ -108,27 +111,27 @@ const activities = [
     <article class="ui-card ui-card-flush">
       <div class="ui-card-body" style="padding: 24px 24px 0">
         <div class="ui-card-header">
-          <h3>So'nggi buyurtmalar</h3>
+          <h3>{{ t('dashboard.recentOrders') }}</h3>
         </div>
       </div>
       <div class="ui-table-wrap">
         <table class="ui-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Foydalanuvchi</th>
-              <th>Summa</th>
-              <th>Holat</th>
-              <th>Sana</th>
+              <th>{{ t('dashboard.colId') }}</th>
+              <th>{{ t('dashboard.colUser') }}</th>
+              <th>{{ t('dashboard.colAmount') }}</th>
+              <th>{{ t('dashboard.colStatus') }}</th>
+              <th>{{ t('dashboard.colDate') }}</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="order in recentOrders" :key="order.id">
               <td><strong>{{ order.id }}</strong></td>
               <td>{{ order.user }}</td>
-              <td>{{ order.amount }} so'm</td>
+              <td>{{ order.amount }} {{ t('common.currency') }}</td>
               <td>
-                <span class="ui-badge" :class="order.statusClass">{{ order.status }}</span>
+                <span class="ui-badge" :class="order.statusClass">{{ t(`status.${order.status}`) }}</span>
               </td>
               <td>{{ order.date }}</td>
             </tr>

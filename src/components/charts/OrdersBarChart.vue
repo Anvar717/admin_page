@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { ChartConfiguration, ScriptableContext } from 'chart.js'
 import ChartCanvas from './ChartCanvas.vue'
 import { cartesianScales, chartPlugins, getChartColors } from '../../composables/useChartTheme'
 
-const labels = ['Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan', 'Yak']
+const { t, locale } = useI18n()
+
+const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
 const data = [42, 58, 35, 72, 48, 91, 63]
 
 const config = computed(() => {
   const colors = getChartColors()
+  const labels = dayKeys.map((key) => t(`days.${key}`))
 
   return {
     type: 'bar',
@@ -16,7 +20,7 @@ const config = computed(() => {
       labels,
       datasets: [
         {
-          label: 'Buyurtmalar',
+          label: t('dashboard.orders'),
           data,
           borderRadius: 8,
           borderSkipped: false,
@@ -51,5 +55,5 @@ const config = computed(() => {
 </script>
 
 <template>
-  <ChartCanvas :config="config" />
+  <ChartCanvas :key="locale" :config="config" />
 </template>

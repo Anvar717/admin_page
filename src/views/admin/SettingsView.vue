@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AppIcon from '../../components/icons/AppIcon.vue'
+
+const { t } = useI18n()
 
 const siteName = ref('Admin Panel')
 const email = ref('admin@example.com')
@@ -13,23 +16,23 @@ const darkMode = ref(false)
     <article class="ui-card">
       <div class="ui-card-body">
         <div class="ui-card-header">
-          <h3>Umumiy sozlamalar</h3>
+          <h3>{{ t('settings.general') }}</h3>
         </div>
         <form class="settings-form" @submit.prevent>
           <label class="field">
-            <span>Sayt nomi</span>
+            <span>{{ t('settings.siteName') }}</span>
             <input v-model="siteName" type="text" class="ui-input" style="min-width: unset" />
           </label>
 
           <label class="field">
-            <span>Admin email</span>
+            <span>{{ t('settings.adminEmail') }}</span>
             <input v-model="email" type="email" class="ui-input" style="min-width: unset" />
           </label>
 
           <label class="toggle-field">
             <div>
-              <strong>Bildirishnomalar</strong>
-              <span>Email orqali xabarlar olish</span>
+              <strong>{{ t('settings.notifications') }}</strong>
+              <span>{{ t('settings.notificationsDesc') }}</span>
             </div>
             <label class="switch">
               <input v-model="notifications" type="checkbox" />
@@ -39,8 +42,8 @@ const darkMode = ref(false)
 
           <label class="toggle-field">
             <div>
-              <strong>Qorong'u rejim</strong>
-              <span>Interfeys rangini o'zgartirish</span>
+              <strong>{{ t('settings.darkMode') }}</strong>
+              <span>{{ t('settings.darkModeDesc') }}</span>
             </div>
             <label class="switch">
               <input v-model="darkMode" type="checkbox" />
@@ -48,7 +51,7 @@ const darkMode = ref(false)
             </label>
           </label>
 
-          <button type="submit" class="ui-btn ui-btn-primary">Saqlash</button>
+          <button type="submit" class="ui-btn ui-btn-primary">{{ t('common.save') }}</button>
         </form>
       </div>
     </article>
@@ -58,11 +61,11 @@ const darkMode = ref(false)
         <div class="ui-card-header">
           <h3 class="danger-title">
             <AppIcon name="alert-triangle" :size="18" />
-            Xavfli zona
+            {{ t('settings.dangerZone') }}
           </h3>
         </div>
-        <p>Hisob ma'lumotlarini o'chirish yoki tizimni qayta tiklash.</p>
-        <button type="button" class="danger-btn">Ma'lumotlarni tozalash</button>
+        <p>{{ t('settings.dangerDesc') }}</p>
+        <button type="button" class="danger-btn">{{ t('settings.clearData') }}</button>
       </div>
     </article>
   </div>

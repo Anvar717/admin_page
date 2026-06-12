@@ -1,33 +1,35 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { ChartConfiguration } from 'chart.js'
 import ChartCanvas from './ChartCanvas.vue'
 import { chartPlugins, getChartColors } from '../../composables/useChartTheme'
 
+const { t, locale } = useI18n()
+
 const props = withDefaults(
   defineProps<{
-    title?: string
-    labels?: string[]
     values?: number[]
   }>(),
   {
-    title: 'Buyurtma holati',
-    labels: () => ['Yangi', 'Jarayonda', 'Yakunlangan', 'Bekor'],
     values: () => [24, 18, 312, 12],
   },
 )
 
+const statusLabelKeys = ['status.new', 'common.inProgress', 'status.done', 'status.cancelled'] as const
+
 const config = computed(() => {
   const colors = getChartColors()
+  const labels = statusLabelKeys.map((key) => t(key))
 
   return {
     type: 'doughnut',
     data: {
-      labels: props.labels,
+      labels,
       datasets: [
         {
           data: props.values,
-          backgroundColor: colors.palette.slice(0, props.labels.length),
+          backgroundColor: colors.palette.slice(0, labels.length),
           borderWidth: 0,
           hoverOffset: 8,
           spacing: 3,
@@ -51,7 +53,7 @@ const config = computed(() => {
 </script>
 
 <template>
-  <ChartCanvas :config="config" class="donut-chart" />
+  <ChartCanvas :key="locale" :config="config" class="donut-chart" />
 </template>
 
 <style scoped>

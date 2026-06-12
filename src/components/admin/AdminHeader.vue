@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuth } from '../../composables/useAuth'
 import AppIcon from '../icons/AppIcon.vue'
+import LanguageSwitcher from '../LanguageSwitcher.vue'
 
 defineEmits<{
   toggleSidebar: []
@@ -10,19 +12,30 @@ defineEmits<{
 
 const route = useRoute()
 const router = useRouter()
+const { t, locale } = useI18n()
 const { logout } = useAuth()
 
+const titleKeys: Record<string, string> = {
+  overview: 'nav.dashboard',
+  users: 'nav.users',
+  orders: 'nav.orders',
+  'order-create': 'nav.orderCreate',
+  analytics: 'nav.analytics',
+  settings: 'nav.settings',
+}
+
 const pageTitle = computed(() => {
-  const titles: Record<string, string> = {
-    overview: 'Dashboard',
-    users: 'Foydalanuvchilar',
-    orders: 'Buyurtmalar',
-    'order-create': 'Yangi buyurtma',
-    analytics: 'Analitika',
-    settings: 'Sozlamalar',
+  const key = titleKeys[route.name as string]
+  return key ? t(key) : t('common.admin')
+})
+
+const todayLabel = computed(() => {
+  const localeMap: Record<string, string> = {
+    'uz-Latn': 'uz-UZ',
+    'uz-Cyrl': 'uz-UZ',
+    ru: 'ru-RU',
   }
-  const name = route.name as string
-  return titles[name] ?? 'Admin'
+  return `${t('common.today')}, ${new Date().toLocaleDateString(localeMap[locale.value] ?? 'uz-UZ')}`
 })
 
 function handleLogout() {
@@ -34,24 +47,26 @@ function handleLogout() {
 <template>
   <header class="admin-header">
     <div class="header-left">
-      <button type="button" class="menu-btn" aria-label="Menyu" @click="$emit('toggleSidebar')">
+      <button type="button" class="menu-btn" :aria-label="t('common.menu')" @click="$emit('toggleSidebar')">
         <AppIcon name="menu" :size="18" />
       </button>
       <div class="title-block">
         <h1>{{ pageTitle }}</h1>
-        <p>Bugun, {{ new Date().toLocaleDateString('uz-UZ') }}</p>
+        <p>{{ todayLabel }}</p>
       </div>
     </div>
 
     <div class="header-center">
       <div class="search-box">
         <AppIcon name="search" :size="16" class="search-icon" />
-        <input type="search" placeholder="Qidirish..." />
+        <input type="search" :placeholder="t('common.search')" />
       </div>
     </div>
 
     <div class="header-right">
-      <button type="button" class="icon-btn" aria-label="Bildirishnomalar">
+      <LanguageSwitcher />
+
+      <button type="button" class="icon-btn" :aria-label="t('common.notifications')">
         <AppIcon name="bell" :size="18" />
         <span class="notif-dot" />
       </button>
@@ -62,13 +77,13 @@ function handleLogout() {
         </span>
         <div class="user-info">
           <strong>admin</strong>
-          <span>Administrator</span>
+          <span>{{ t('common.administrator') }}</span>
         </div>
       </div>
 
       <button type="button" class="logout-btn" @click="handleLogout">
         <AppIcon name="logout" :size="16" />
-        <span class="logout-text">Chiqish</span>
+        <span class="logout-text">{{ t('common.logout') }}</span>
       </button>
     </div>
   </header>

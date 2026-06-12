@@ -1,22 +1,31 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import AppIcon from '../../components/icons/AppIcon.vue'
 
+const { t } = useI18n()
+
 const users = [
-  { id: 1, name: 'Ali Valiyev', email: 'ali@mail.com', role: 'Foydalanuvchi', status: 'Faol' },
-  { id: 2, name: 'Dilnoza Karimova', email: 'dilnoza@mail.com', role: 'Moderator', status: 'Faol' },
-  { id: 3, name: 'Jasur Rahimov', email: 'jasur@mail.com', role: 'Foydalanuvchi', status: 'Nofaol' },
-  { id: 4, name: 'Nodira Saidova', email: 'nodira@mail.com', role: 'Admin', status: 'Faol' },
-  { id: 5, name: 'Sardor Tursunov', email: 'sardor@mail.com', role: 'Foydalanuvchi', status: 'Faol' },
+  { id: 1, name: 'Ali Valiyev', email: 'ali@mail.com', role: 'user', status: 'active' },
+  { id: 2, name: 'Dilnoza Karimova', email: 'dilnoza@mail.com', role: 'moderator', status: 'active' },
+  { id: 3, name: 'Jasur Rahimov', email: 'jasur@mail.com', role: 'user', status: 'inactive' },
+  { id: 4, name: 'Nodira Saidova', email: 'nodira@mail.com', role: 'admin', status: 'active' },
+  { id: 5, name: 'Sardor Tursunov', email: 'sardor@mail.com', role: 'user', status: 'active' },
 ]
+
+const roleKeys: Record<string, string> = {
+  user: 'users.roleUser',
+  moderator: 'users.roleModerator',
+  admin: 'users.roleAdmin',
+}
 </script>
 
 <template>
   <div class="admin-page">
     <div class="ui-toolbar">
-      <input type="search" placeholder="Foydalanuvchi qidirish..." class="ui-input" />
+      <input type="search" :placeholder="t('users.search')" class="ui-input" />
       <button type="button" class="ui-btn ui-btn-primary">
         <AppIcon name="plus" :size="16" />
-        Yangi foydalanuvchi
+        {{ t('users.addUser') }}
       </button>
     </div>
 
@@ -25,12 +34,12 @@ const users = [
         <table class="ui-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Ism</th>
-              <th>Email</th>
-              <th>Rol</th>
-              <th>Holat</th>
-              <th>Amallar</th>
+              <th>{{ t('users.colId') }}</th>
+              <th>{{ t('users.colName') }}</th>
+              <th>{{ t('users.colEmail') }}</th>
+              <th>{{ t('users.colRole') }}</th>
+              <th>{{ t('users.colStatus') }}</th>
+              <th>{{ t('common.actions') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -43,17 +52,17 @@ const users = [
                 </div>
               </td>
               <td>{{ user.email }}</td>
-              <td>{{ user.role }}</td>
+              <td>{{ t(roleKeys[user.role]) }}</td>
               <td>
                 <span
                   class="ui-badge"
-                  :class="user.status === 'Faol' ? 'success' : 'danger'"
+                  :class="user.status === 'active' ? 'success' : 'danger'"
                 >
-                  {{ user.status }}
+                  {{ t(`common.${user.status}`) }}
                 </span>
               </td>
               <td>
-                <button type="button" class="ui-btn-text">Tahrirlash</button>
+                <button type="button" class="ui-btn-text">{{ t('common.edit') }}</button>
               </td>
             </tr>
           </tbody>

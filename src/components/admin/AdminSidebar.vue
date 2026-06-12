@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import AppIcon, { type IconName } from '../icons/AppIcon.vue'
 
 const router = useRouter()
+const { t } = useI18n()
 
 defineProps<{
   open: boolean
@@ -12,12 +14,12 @@ defineEmits<{
   navigate: []
 }>()
 
-const menuItems: { name: string; label: string; icon: IconName }[] = [
-  { name: 'overview', label: 'Dashboard', icon: 'dashboard' },
-  { name: 'users', label: 'Foydalanuvchilar', icon: 'users' },
-  { name: 'orders', label: 'Buyurtmalar', icon: 'orders' },
-  { name: 'analytics', label: 'Analitika', icon: 'analytics' },
-  { name: 'settings', label: 'Sozlamalar', icon: 'settings' },
+const menuItems: { name: string; labelKey: string; icon: IconName }[] = [
+  { name: 'overview', labelKey: 'nav.dashboard', icon: 'dashboard' },
+  { name: 'users', labelKey: 'nav.users', icon: 'users' },
+  { name: 'orders', labelKey: 'nav.orders', icon: 'orders' },
+  { name: 'analytics', labelKey: 'nav.analytics', icon: 'analytics' },
+  { name: 'settings', labelKey: 'nav.settings', icon: 'settings' },
 ]
 </script>
 
@@ -28,12 +30,12 @@ const menuItems: { name: string; label: string; icon: IconName }[] = [
         <AppIcon name="shield" :size="22" :stroke-width="2.2" />
       </div>
       <div>
-        <strong>Admin Panel</strong>
-        <span>Boshqaruv tizimi</span>
+        <strong>{{ t('common.adminPanel') }}</strong>
+        <span>{{ t('common.managementSystem') }}</span>
       </div>
     </div>
 
-    <p class="nav-label">Menyu</p>
+    <p class="nav-label">{{ t('common.menuLabel') }}</p>
 
     <nav class="sidebar-nav">
       <RouterLink
@@ -50,7 +52,7 @@ const menuItems: { name: string; label: string; icon: IconName }[] = [
           @click.prevent="router.push({ name: item.name }); $emit('navigate')"
         >
           <AppIcon :name="item.icon" :size="18" class="nav-icon" />
-          <span>{{ item.label }}</span>
+          <span>{{ t(item.labelKey) }}</span>
           <span v-if="isActive" class="active-dot" />
         </a>
       </RouterLink>
@@ -60,8 +62,8 @@ const menuItems: { name: string; label: string; icon: IconName }[] = [
       <div class="footer-card">
         <AppIcon name="activity" :size="14" class="footer-icon" />
         <div>
-          <p>Admin v1.0</p>
-          <span>Barcha tizimlar ishlayapti</span>
+          <p>{{ t('common.version') }}</p>
+          <span>{{ t('common.allSystemsOk') }}</span>
         </div>
       </div>
     </div>

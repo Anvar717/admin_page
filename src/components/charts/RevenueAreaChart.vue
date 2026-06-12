@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { ChartConfiguration, ScriptableContext } from 'chart.js'
 import ChartCanvas from './ChartCanvas.vue'
 import { cartesianScales, chartPlugins, getChartColors } from '../../composables/useChartTheme'
 
-const labels = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyn', 'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek']
+const { t, locale } = useI18n()
+
+const monthKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'] as const
 const data = [12, 19, 14, 22, 18, 28, 24, 32, 26, 35, 30, 38]
 
 const config = computed(() => {
   const colors = getChartColors()
+  const labels = monthKeys.map((key) => t(`months.${key}`))
 
   return {
     type: 'line',
@@ -16,7 +20,7 @@ const config = computed(() => {
       labels,
       datasets: [
         {
-          label: 'Daromad (mln)',
+          label: t('analytics.revenueMln'),
           data,
           fill: true,
           tension: 0.42,
@@ -58,5 +62,5 @@ const config = computed(() => {
 </script>
 
 <template>
-  <ChartCanvas :config="config" />
+  <ChartCanvas :key="locale" :config="config" />
 </template>

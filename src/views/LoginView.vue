@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { STATIC_LOGIN, STATIC_PASSWORD, useAuth } from '../composables/useAuth'
 import AppIcon from '../components/icons/AppIcon.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
 const router = useRouter()
+const { t } = useI18n()
 const { login } = useAuth()
 
 const username = ref(STATIC_LOGIN)
@@ -22,7 +25,7 @@ async function handleSubmit() {
   loading.value = false
 
   if (message) {
-    error.value = message
+    error.value = t(`login.${message}`)
     return
   }
 
@@ -32,17 +35,21 @@ async function handleSubmit() {
 
 <template>
   <div class="login-page">
+    <div class="login-lang">
+      <LanguageSwitcher variant="glass" />
+    </div>
+
     <div class="login-visual">
       <div class="visual-content">
         <div class="visual-logo">
           <AppIcon name="shield" :size="28" :stroke-width="2.2" />
         </div>
-        <h2>Admin boshqaruv tizimi</h2>
-        <p>Ma'lumotlaringizni xavfsiz boshqaring va real vaqtda kuzating</p>
+        <h2>{{ t('login.title') }}</h2>
+        <p>{{ t('login.subtitle') }}</p>
         <ul class="features">
-          <li><AppIcon name="chart" :size="14" /> Real vaqt statistikasi</li>
-          <li><AppIcon name="users" :size="14" /> Foydalanuvchilar boshqaruvi</li>
-          <li><AppIcon name="orders" :size="14" /> Buyurtmalar monitoringi</li>
+          <li><AppIcon name="chart" :size="14" /> {{ t('login.feature1') }}</li>
+          <li><AppIcon name="users" :size="14" /> {{ t('login.feature2') }}</li>
+          <li><AppIcon name="orders" :size="14" /> {{ t('login.feature3') }}</li>
         </ul>
       </div>
     </div>
@@ -50,13 +57,13 @@ async function handleSubmit() {
     <div class="login-form-side">
       <div class="login-card">
         <div class="login-header">
-          <h1>Xush kelibsiz</h1>
-          <p>Hisobingizga kiring</p>
+          <h1>{{ t('login.welcome') }}</h1>
+          <p>{{ t('login.signIn') }}</p>
         </div>
 
         <form class="login-form" @submit.prevent="handleSubmit">
           <label class="field">
-            <span>Login</span>
+            <span>{{ t('login.loginLabel') }}</span>
             <div class="input-wrap">
               <AppIcon name="user" :size="16" class="input-icon" />
               <input
@@ -70,7 +77,7 @@ async function handleSubmit() {
           </label>
 
           <label class="field">
-            <span>Parol</span>
+            <span>{{ t('login.passwordLabel') }}</span>
             <div class="input-wrap">
               <AppIcon name="lock" :size="16" class="input-icon" />
               <input
@@ -96,12 +103,12 @@ async function handleSubmit() {
 
           <button type="submit" class="submit-btn" :disabled="loading">
             <span v-if="loading" class="spinner" />
-            {{ loading ? 'Kutilmoqda...' : 'Kirish' }}
+            {{ loading ? t('common.loading') : t('login.submit') }}
           </button>
         </form>
 
         <div class="demo-hint">
-          <span class="hint-label">Demo hisob</span>
+          <span class="hint-label">{{ t('common.demoAccount') }}</span>
           <code>{{ STATIC_LOGIN }} / {{ STATIC_PASSWORD }}</code>
         </div>
       </div>
@@ -115,6 +122,14 @@ async function handleSubmit() {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100svh;
+  position: relative;
+}
+
+.login-lang {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
 }
 
 .login-visual {
@@ -385,6 +400,11 @@ async function handleSubmit() {
 
   .login-visual {
     display: none;
+  }
+
+  .login-lang {
+    top: 16px;
+    right: 16px;
   }
 }
 </style>

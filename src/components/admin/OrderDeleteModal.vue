@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import AppIcon from '../icons/AppIcon.vue'
 import type { Order } from '../../composables/useOrders'
 
@@ -11,6 +12,8 @@ const emit = defineEmits<{
   close: []
   confirm: []
 }>()
+
+const { t } = useI18n()
 
 function handleBackdropClick(event: MouseEvent) {
   if (event.target === event.currentTarget) {
@@ -27,25 +30,25 @@ function handleBackdropClick(event: MouseEvent) {
           <AppIcon name="delete" :size="24" />
         </div>
 
-        <h2>Buyurtmani o'chirish</h2>
+        <h2>{{ t('orders.deleteTitle') }}</h2>
         <p>
-          <strong>{{ order.id }}</strong> buyurtmasini o'chirmoqchimisiz?
-          Bu amalni qaytarib bo'lmaydi.
+          <strong>{{ order.id }}</strong> {{ t('orders.deleteConfirm') }}
+          {{ t('orders.deleteWarning') }}
         </p>
 
         <div class="order-preview">
           <span>{{ order.customer }}</span>
           <span>{{ order.product }}</span>
-          <span>{{ order.amount }} so'm</span>
+          <span>{{ order.amount }} {{ t('common.currency') }}</span>
         </div>
 
         <div class="modal-actions">
           <button type="button" class="btn-cancel" @click="emit('close')">
-            Bekor qilish
+            {{ t('common.cancel') }}
           </button>
           <button type="button" class="btn-delete" @click="emit('confirm')">
             <AppIcon name="delete" :size="16" />
-            O'chirish
+            {{ t('common.delete') }}
           </button>
         </div>
       </div>

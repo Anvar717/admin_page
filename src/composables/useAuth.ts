@@ -12,7 +12,7 @@ export function useAuth() {
 
   async function login(login: string, password: string): Promise<string | null> {
     if (login !== STATIC_LOGIN || password !== STATIC_PASSWORD) {
-      return 'Login yoki parol noto\'g\'ri'
+      return 'invalidCredentials'
     }
 
     const authToken = btoa(`${login}:${Date.now()}`)
