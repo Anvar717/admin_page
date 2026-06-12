@@ -15,234 +15,424 @@ const stats: { labelKey: string; value: string; change: string; up: boolean; ico
 ]
 
 const recentOrders = [
-  { id: '#1024', user: 'Ali Valiyev', amount: '450,000', status: 'new', statusClass: 'info', date: '11.06.2026' },
-  { id: '#1023', user: 'Dilnoza Karimova', amount: '1,200,000', status: 'confirmed', statusClass: 'purple', date: '11.06.2026' },
-  { id: '#1022', user: 'Jasur Rahimov', amount: '320,000', status: 'shipping', statusClass: 'warning', date: '10.06.2026' },
-  { id: '#1021', user: 'Nodira Saidova', amount: '890,000', status: 'cancelled', statusClass: 'danger', date: '10.06.2026' },
+  { id: '#1024', user: 'Ali Valiyev', amount: '450,000', status: 'new', statusClass: 'info' },
+  { id: '#1023', user: 'Dilnoza K.', amount: '1,200,000', status: 'confirmed', statusClass: 'purple' },
+  { id: '#1022', user: 'Jasur R.', amount: '320,000', status: 'shipping', statusClass: 'warning' },
 ]
 
 const activities = [
   { textKey: 'dashboard.activity1', timeKey: 'dashboard.minutesAgo', timeVal: '5' },
   { textKey: 'dashboard.activity2', timeKey: 'dashboard.minutesAgo', timeVal: '12' },
   { textKey: 'dashboard.activity3', timeKey: 'dashboard.hourAgo', timeVal: '1' },
-  { textKey: 'dashboard.activity4', timeKey: 'dashboard.hoursAgo', timeVal: '2' },
 ]
 </script>
 
 <template>
-  <div class="admin-page">
-    <section class="ui-stat-grid">
-      <article v-for="stat in stats" :key="stat.labelKey" class="ui-stat-card">
-        <div class="ui-stat-top">
-          <p class="ui-stat-label">{{ t(stat.labelKey) }}</p>
-          <span class="ui-stat-icon">
-            <AppIcon :name="stat.icon" :size="20" />
-          </span>
-        </div>
-        <h2 class="ui-stat-value">{{ stat.value }}</h2>
-        <span class="ui-stat-change" :class="{ down: !stat.up }">
-          {{ stat.change }} {{ t('common.comparedToLastMonth') }}
+  <div class="admin-page dashboard-page">
+    <section class="dash-stats">
+      <article v-for="stat in stats" :key="stat.labelKey" class="dash-stat">
+        <span class="dash-stat-icon">
+          <AppIcon :name="stat.icon" :size="16" />
         </span>
+        <div class="dash-stat-body">
+          <p class="dash-stat-label">{{ t(stat.labelKey) }}</p>
+          <div class="dash-stat-row">
+            <strong>{{ stat.value }}</strong>
+            <span class="dash-stat-change" :class="{ down: !stat.up }">{{ stat.change }}</span>
+          </div>
+        </div>
       </article>
     </section>
 
-    <section class="charts-row-main">
-      <article class="ui-card chart-card chart-card--large">
-        <div class="ui-card-body">
-          <div class="chart-card-header">
-            <div>
-              <h3>{{ t('dashboard.monthlyRevenue') }}</h3>
-              <p>{{ t('dashboard.yearlyDynamics') }}</p>
-            </div>
-            <span class="chart-badge">+23% {{ t('dashboard.growth') }}</span>
-          </div>
+    <section class="dash-grid">
+      <article class="dash-panel dash-panel--wide">
+        <div class="dash-panel-head">
+          <h3>{{ t('dashboard.monthlyRevenue') }}</h3>
+          <span class="dash-badge">+23%</span>
+        </div>
+        <div class="dash-chart">
           <RevenueAreaChart />
         </div>
       </article>
 
-      <article class="ui-card chart-card">
-        <div class="ui-card-body">
-          <div class="chart-card-header">
-            <div>
-              <h3>{{ t('dashboard.orderStatus') }}</h3>
-              <p>{{ t('dashboard.currentDistribution') }}</p>
-            </div>
-          </div>
-          <StatusDonutChart />
+      <article class="dash-panel">
+        <div class="dash-panel-head">
+          <h3>{{ t('dashboard.orderStatus') }}</h3>
+        </div>
+        <div class="dash-chart dash-chart--donut">
+          <StatusDonutChart compact />
         </div>
       </article>
-    </section>
 
-    <section class="charts-row-secondary">
-      <article class="ui-card chart-card">
-        <div class="ui-card-body">
-          <div class="chart-card-header">
-            <div>
-              <h3>{{ t('dashboard.weeklyOrders') }}</h3>
-              <p>{{ t('dashboard.dailyStats') }}</p>
-            </div>
-            <span class="chart-total">{{ t('common.total') }}: 409</span>
-          </div>
+      <article class="dash-panel">
+        <div class="dash-panel-head">
+          <h3>{{ t('dashboard.weeklyOrders') }}</h3>
+          <span class="dash-meta">409</span>
+        </div>
+        <div class="dash-chart">
           <OrdersBarChart />
         </div>
       </article>
 
-      <article class="ui-card chart-card">
-        <div class="ui-card-body">
-          <div class="chart-card-header">
-            <div>
-              <h3>{{ t('dashboard.recentActivity') }}</h3>
-              <p>{{ t('dashboard.realtimeUpdates') }}</p>
-            </div>
+      <article class="dash-panel dash-panel--split">
+        <div class="dash-split-col">
+          <div class="dash-panel-head">
+            <h3>{{ t('dashboard.recentActivity') }}</h3>
           </div>
-          <div class="activity-list">
-            <div v-for="(item, i) in activities" :key="i" class="activity-item">
-              <span class="activity-dot" />
+          <ul class="dash-activity">
+            <li v-for="(item, i) in activities" :key="i">
+              <span class="dash-activity-dot" />
               <div>
                 <p>{{ t(item.textKey) }}</p>
                 <span>{{ item.timeVal }} {{ t(item.timeKey) }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="dash-split-col">
+          <div class="dash-panel-head">
+            <h3>{{ t('dashboard.recentOrders') }}</h3>
+          </div>
+          <div class="dash-orders">
+            <div v-for="order in recentOrders" :key="order.id" class="dash-order">
+              <div class="dash-order-main">
+                <strong>{{ order.id }}</strong>
+                <span>{{ order.user }}</span>
+              </div>
+              <div class="dash-order-side">
+                <span>{{ order.amount }}</span>
+                <span class="ui-badge" :class="order.statusClass">{{ t(`status.${order.status}`) }}</span>
               </div>
             </div>
           </div>
         </div>
       </article>
     </section>
-
-    <article class="ui-card ui-card-flush">
-      <div class="ui-card-body" style="padding: 24px 24px 0">
-        <div class="ui-card-header">
-          <h3>{{ t('dashboard.recentOrders') }}</h3>
-        </div>
-      </div>
-      <div class="ui-table-wrap">
-        <table class="ui-table">
-          <thead>
-            <tr>
-              <th>{{ t('dashboard.colId') }}</th>
-              <th>{{ t('dashboard.colUser') }}</th>
-              <th>{{ t('dashboard.colAmount') }}</th>
-              <th>{{ t('dashboard.colStatus') }}</th>
-              <th>{{ t('dashboard.colDate') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="order in recentOrders" :key="order.id">
-              <td><strong>{{ order.id }}</strong></td>
-              <td>{{ order.user }}</td>
-              <td>{{ order.amount }} {{ t('common.currency') }}</td>
-              <td>
-                <span class="ui-badge" :class="order.statusClass">{{ t(`status.${order.status}`) }}</span>
-              </td>
-              <td>{{ order.date }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </article>
   </div>
 </template>
 
 <style scoped>
-.charts-row-main {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr;
-  gap: 20px;
-}
-
-.charts-row-secondary {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.chart-card-header {
+.dashboard-page {
+  gap: 10px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
+  flex-direction: column;
 }
 
-.chart-card-header h3 {
-  margin: 0 0 4px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-h);
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  flex-shrink: 0;
 }
 
-.chart-card-header p {
-  margin: 0;
-  font-size: 12px;
+.dash-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.dash-stat-icon {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+}
+
+.dash-stat-body {
+  min-width: 0;
+}
+
+.dash-stat-label {
+  margin: 0 0 2px;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.chart-badge {
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 12px;
+.dash-stat-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.dash-stat-row strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-h);
+  letter-spacing: -0.02em;
+}
+
+.dash-stat-change {
+  font-size: 11px;
   font-weight: 600;
   color: var(--success);
-  background: var(--success-bg);
-  white-space: nowrap;
 }
 
-.chart-total {
+.dash-stat-change.down {
+  color: var(--danger);
+}
+
+.dash-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+}
+
+.dash-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.dash-panel--wide {
+  grid-column: 1 / 3;
+}
+
+.dash-panel--split {
+  grid-column: 2 / 4;
+  flex-direction: row;
+  gap: 14px;
+  padding: 10px 12px;
+}
+
+.dash-split-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.dash-split-col + .dash-split-col {
+  border-left: 1px solid var(--border-light, var(--border));
+  padding-left: 14px;
+}
+
+.dash-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.dash-panel-head h3 {
+  margin: 0;
   font-size: 13px;
+  font-weight: 600;
+  color: var(--text-h);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--success);
+  background: var(--success-bg);
+  flex-shrink: 0;
+}
+
+.dash-meta {
+  font-size: 11px;
   font-weight: 600;
   color: var(--accent);
 }
 
-.activity-list {
+.dash-chart {
+  flex: 1;
+  min-height: 0;
+}
+
+.dash-chart :deep(.chart-canvas) {
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.dash-chart--donut :deep(.chart-canvas) {
+  min-height: 0 !important;
+}
+
+.dash-activity {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+  justify-content: space-between;
 }
 
-.activity-item {
+.dash-activity li {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
+  gap: 8px;
+  flex: 1;
+  padding: 6px 8px;
   background: var(--admin-bg);
-  border-radius: var(--radius-md);
-  transition: background var(--transition);
+  border-radius: var(--radius-sm);
 }
 
-.activity-item:hover {
-  background: var(--accent-bg);
-}
-
-.activity-dot {
-  width: 8px;
-  height: 8px;
-  margin-top: 6px;
+.dash-activity-dot {
+  width: 6px;
+  height: 6px;
+  margin-top: 5px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-bg);
   flex-shrink: 0;
 }
 
-.activity-item p {
-  margin: 0 0 4px;
-  font-size: 14px;
+.dash-activity p {
+  margin: 0;
+  font-size: 11px;
   color: var(--text-h);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.activity-item span {
-  font-size: 12px;
+.dash-activity span {
+  font-size: 10px;
   color: var(--text);
 }
 
+.dash-orders {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+  justify-content: space-between;
+}
+
+.dash-order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 1;
+  padding: 6px 8px;
+  background: var(--admin-bg);
+  border-radius: var(--radius-sm);
+}
+
+.dash-order-main {
+  min-width: 0;
+}
+
+.dash-order-main strong {
+  display: block;
+  font-size: 11px;
+  color: var(--text-h);
+}
+
+.dash-order-main span {
+  font-size: 10px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-order-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.dash-order-side > span:first-child {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.dash-order-side .ui-badge {
+  padding: 2px 7px;
+  font-size: 9px;
+}
+
 @media (max-width: 1200px) {
-  .charts-row-main {
-    grid-template-columns: 1fr;
+  .dashboard-page {
+    height: auto;
+    min-height: 600px;
+    overflow: visible;
+  }
+
+  .dash-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr auto;
+  }
+
+  .dash-panel--wide {
+    grid-column: 1 / -1;
+  }
+
+  .dash-panel--split {
+    grid-column: 1 / -1;
+  }
+
+  .dash-chart :deep(.chart-canvas) {
+    min-height: 140px !important;
   }
 }
 
 @media (max-width: 768px) {
-  .charts-row-secondary {
+  .dash-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dash-grid {
     grid-template-columns: 1fr;
+  }
+
+  .dash-panel--wide,
+  .dash-panel--split {
+    grid-column: 1;
+  }
+
+  .dash-panel--split {
+    flex-direction: column;
+  }
+
+  .dash-split-col + .dash-split-col {
+    border-left: none;
+    border-top: 1px solid var(--border-light, var(--border));
+    padding-left: 0;
+    padding-top: 10px;
   }
 }
 </style>

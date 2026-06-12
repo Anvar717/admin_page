@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import AdminSidebar from '../components/admin/AdminSidebar.vue'
 import AdminHeader from '../components/admin/AdminHeader.vue'
 
+const route = useRoute()
 const sidebarOpen = ref(false)
+const isDashboard = computed(() => route.name === 'overview')
 
 function closeSidebar() {
   sidebarOpen.value = false
@@ -22,7 +25,7 @@ function closeSidebar() {
 
     <div class="admin-main">
       <AdminHeader @toggle-sidebar="sidebarOpen = !sidebarOpen" />
-      <main class="admin-content">
+      <main class="admin-content" :class="{ 'admin-content--fit': isDashboard }">
         <RouterView />
       </main>
     </div>
@@ -32,9 +35,10 @@ function closeSidebar() {
 <style scoped>
 .admin-layout {
   display: flex;
-  min-height: 100svh;
+  height: 100svh;
   width: 100%;
   background: var(--admin-bg);
+  overflow: hidden;
 }
 
 .sidebar-overlay {
@@ -46,12 +50,31 @@ function closeSidebar() {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
 }
 
 .admin-content {
   flex: 1;
-  padding: 28px;
+  min-height: 0;
+  padding: 16px 20px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-content--fit {
+  overflow: hidden;
+}
+
+.admin-content--fit > :deep(*) {
+  flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 1200px) {
+  .admin-content--fit {
+    overflow-y: auto;
+  }
 }
 
 @media (max-width: 1024px) {

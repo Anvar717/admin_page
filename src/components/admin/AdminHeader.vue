@@ -94,6 +94,7 @@ function handleLogout() {
   position: sticky;
   top: 0;
   z-index: 30;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;

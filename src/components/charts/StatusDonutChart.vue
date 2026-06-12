@@ -10,9 +10,11 @@ const { t, locale } = useI18n()
 const props = withDefaults(
   defineProps<{
     values?: number[]
+    compact?: boolean
   }>(),
   {
     values: () => [24, 18, 312, 12],
+    compact: false,
   },
 )
 
@@ -39,12 +41,17 @@ const config = computed(() => {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      cutout: '68%',
+      cutout: props.compact ? '62%' : '68%',
       plugins: {
         ...chartPlugins(),
         legend: {
           ...chartPlugins()?.legend,
-          position: 'bottom',
+          position: props.compact ? 'right' : 'bottom',
+          labels: {
+            boxWidth: props.compact ? 8 : 12,
+            padding: props.compact ? 8 : 16,
+            font: { size: props.compact ? 10 : 12 },
+          },
         },
       },
     },
@@ -53,11 +60,15 @@ const config = computed(() => {
 </script>
 
 <template>
-  <ChartCanvas :key="locale" :config="config" class="donut-chart" />
+  <ChartCanvas :key="locale" :config="config" :class="['donut-chart', { 'donut-chart--compact': compact }]" />
 </template>
 
 <style scoped>
 .donut-chart :deep(.chart-canvas) {
   min-height: 300px;
+}
+
+.donut-chart--compact :deep(.chart-canvas) {
+  min-height: 0;
 }
 </style>
