@@ -6,7 +6,7 @@ import AdminHeader from '../components/admin/AdminHeader.vue'
 
 const route = useRoute()
 const sidebarOpen = ref(false)
-const isDashboard = computed(() => route.name === 'overview')
+const isFitPage = computed(() => route.name === 'overview' || route.name === 'analytics')
 
 function closeSidebar() {
   sidebarOpen.value = false
@@ -25,7 +25,7 @@ function closeSidebar() {
 
     <div class="admin-main">
       <AdminHeader @toggle-sidebar="sidebarOpen = !sidebarOpen" />
-      <main class="admin-content" :class="{ 'admin-content--fit': isDashboard }">
+      <main class="admin-content" :class="{ 'admin-content--fit': isFitPage }">
         <RouterView />
       </main>
     </div>

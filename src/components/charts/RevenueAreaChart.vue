@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ChartConfiguration, ScriptableContext } from 'chart.js'
 import ChartCanvas from './ChartCanvas.vue'
-import { cartesianScales, chartPlugins, getChartColors } from '../../composables/useChartTheme'
+import { cartesianScales, chartAnimations, chartPlugins, getChartColors } from '../../composables/useChartTheme'
 
 const { t, locale } = useI18n()
 
@@ -23,8 +23,18 @@ const config = computed(() => {
           label: t('analytics.revenueMln'),
           data,
           fill: true,
-          tension: 0.42,
-          borderColor: colors.accent,
+          tension: 0.45,
+          borderColor: (ctx: ScriptableContext<'line'>) => {
+            const chart = ctx.chart
+            const { ctx: canvasCtx, chartArea } = chart
+            if (!chartArea) return colors.accent
+
+            const gradient = canvasCtx.createLinearGradient(chartArea.left, 0, chartArea.right, 0)
+            gradient.addColorStop(0, colors.lineGradient[0])
+            gradient.addColorStop(0.5, colors.lineGradient[1])
+            gradient.addColorStop(1, colors.lineGradient[2])
+            return gradient
+          },
           backgroundColor: (ctx: ScriptableContext<'line'>) => {
             const chart = ctx.chart
             const { ctx: canvasCtx, chartArea } = chart
@@ -32,12 +42,16 @@ const config = computed(() => {
 
             const gradient = canvasCtx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom)
             gradient.addColorStop(0, colors.gradientStops[0])
-            gradient.addColorStop(1, colors.gradientStops[1])
+            gradient.addColorStop(0.55, colors.gradientStops[1])
+            gradient.addColorStop(1, colors.gradientStops[2])
             return gradient
           },
-          borderWidth: 2.5,
-          pointRadius: 0,
-          pointHoverRadius: 6,
+          borderWidth: 3,
+          pointRadius: data.map((_, i) => (i === data.length - 1 ? 5 : 0)),
+          pointHoverRadius: 7,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: colors.accent,
+          pointBorderWidth: 3,
           pointHoverBackgroundColor: colors.accent,
           pointHoverBorderColor: '#fff',
           pointHoverBorderWidth: 2,
@@ -47,14 +61,25 @@ const config = computed(() => {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      animation: chartAnimations(),
       interaction: { mode: 'index', intersect: false },
       plugins: {
         ...chartPlugins(),
         legend: { display: false },
+        tooltip: {
+          ...chartPlugins()?.tooltip,
+          callbacks: {
+            label: (ctx) => `${ctx.parsed.y} mln`,
+          },
+        },
       },
       scales: {
         x: { ...cartesianScales()?.x, grid: { display: false } },
-        y: { ...cartesianScales()?.y, beginAtZero: true },
+        y: {
+          ...cartesianScales()?.y,
+          beginAtZero: true,
+          grid: { color: 'rgba(99, 102, 241, 0.08)', drawTicks: false },
+        },
       },
     },
   } as ChartConfiguration
@@ -62,5 +87,11 @@ const config = computed(() => {
 </script>
 
 <template>
-  <ChartCanvas :key="locale" :config="config" />
+  <ChartCanvas :key="locale" :config="config" class="revenue-chart" />
 </template>
+
+<style scoped>
+.revenue-chart :deep(.chart-canvas) {
+  filter: drop-shadow(0 4px 14px rgba(99, 102, 241, 0.12));
+}
+</style>

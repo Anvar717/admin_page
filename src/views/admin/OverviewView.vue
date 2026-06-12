@@ -45,29 +45,56 @@ const activities = [
     </section>
 
     <section class="dash-grid">
-      <article class="dash-panel dash-panel--wide">
+      <article class="dash-panel dash-panel--wide dash-panel--chart">
+        <div class="dash-panel-glow" />
         <div class="dash-panel-head">
-          <h3>{{ t('dashboard.monthlyRevenue') }}</h3>
-          <span class="dash-badge">+23%</span>
+          <div class="dash-panel-title">
+            <span class="dash-panel-icon dash-panel-icon--revenue">
+              <AppIcon name="chart" :size="14" />
+            </span>
+            <div>
+              <h3>{{ t('dashboard.monthlyRevenue') }}</h3>
+              <p>{{ t('dashboard.yearlyDynamics') }}</p>
+            </div>
+          </div>
+          <span class="dash-badge">+23% {{ t('dashboard.growth') }}</span>
         </div>
         <div class="dash-chart">
           <RevenueAreaChart />
         </div>
       </article>
 
-      <article class="dash-panel">
+      <article class="dash-panel dash-panel--chart">
+        <div class="dash-panel-glow dash-panel-glow--purple" />
         <div class="dash-panel-head">
-          <h3>{{ t('dashboard.orderStatus') }}</h3>
+          <div class="dash-panel-title">
+            <span class="dash-panel-icon dash-panel-icon--status">
+              <AppIcon name="activity" :size="14" />
+            </span>
+            <div>
+              <h3>{{ t('dashboard.orderStatus') }}</h3>
+              <p>{{ t('dashboard.currentDistribution') }}</p>
+            </div>
+          </div>
         </div>
         <div class="dash-chart dash-chart--donut">
           <StatusDonutChart compact />
         </div>
       </article>
 
-      <article class="dash-panel">
+      <article class="dash-panel dash-panel--chart">
+        <div class="dash-panel-glow dash-panel-glow--blue" />
         <div class="dash-panel-head">
-          <h3>{{ t('dashboard.weeklyOrders') }}</h3>
-          <span class="dash-meta">409</span>
+          <div class="dash-panel-title">
+            <span class="dash-panel-icon dash-panel-icon--orders">
+              <AppIcon name="orders" :size="14" />
+            </span>
+            <div>
+              <h3>{{ t('dashboard.weeklyOrders') }}</h3>
+              <p>{{ t('dashboard.dailyStats') }}</p>
+            </div>
+          </div>
+          <span class="dash-meta">{{ t('common.total') }}: 409</span>
         </div>
         <div class="dash-chart">
           <OrdersBarChart />
@@ -77,7 +104,12 @@ const activities = [
       <article class="dash-panel dash-panel--split">
         <div class="dash-split-col">
           <div class="dash-panel-head">
-            <h3>{{ t('dashboard.recentActivity') }}</h3>
+            <div class="dash-panel-title">
+              <span class="dash-panel-icon dash-panel-icon--activity">
+                <AppIcon name="sessions" :size="14" />
+              </span>
+              <h3>{{ t('dashboard.recentActivity') }}</h3>
+            </div>
           </div>
           <ul class="dash-activity">
             <li v-for="(item, i) in activities" :key="i">
@@ -92,7 +124,12 @@ const activities = [
 
         <div class="dash-split-col">
           <div class="dash-panel-head">
-            <h3>{{ t('dashboard.recentOrders') }}</h3>
+            <div class="dash-panel-title">
+              <span class="dash-panel-icon dash-panel-icon--orders">
+                <AppIcon name="orders" :size="14" />
+              </span>
+              <h3>{{ t('dashboard.recentOrders') }}</h3>
+            </div>
           </div>
           <div class="dash-orders">
             <div v-for="order in recentOrders" :key="order.id" class="dash-order">
@@ -138,6 +175,12 @@ const activities = [
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.dash-stat:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .dash-stat-icon {
@@ -198,6 +241,7 @@ const activities = [
 }
 
 .dash-panel {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -206,6 +250,29 @@ const activities = [
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.dash-panel--chart {
+  background: linear-gradient(180deg, var(--bg) 0%, rgba(99, 102, 241, 0.03) 100%);
+}
+
+.dash-panel-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient);
+  opacity: 0.85;
+}
+
+.dash-panel-glow--purple {
+  background: linear-gradient(90deg, #8b5cf6, #a855f7);
+}
+
+.dash-panel-glow--blue {
+  background: linear-gradient(90deg, #6366f1, #818cf8);
 }
 
 .dash-panel--wide {
@@ -234,14 +301,21 @@ const activities = [
 
 .dash-panel-head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
   margin-bottom: 6px;
   flex-shrink: 0;
 }
 
-.dash-panel-head h3 {
+.dash-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.dash-panel-title h3 {
   margin: 0;
   font-size: 13px;
   font-weight: 600;
@@ -251,25 +325,66 @@ const activities = [
   text-overflow: ellipsis;
 }
 
+.dash-panel-title p {
+  margin: 2px 0 0;
+  font-size: 10px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-panel-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+}
+
+.dash-panel-icon--revenue {
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+}
+
+.dash-panel-icon--status {
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+}
+
+.dash-panel-icon--orders {
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+}
+
+.dash-panel-icon--activity {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
 .dash-badge {
-  padding: 2px 8px;
+  padding: 3px 9px;
   border-radius: 999px;
   font-size: 10px;
   font-weight: 700;
   color: var(--success);
   background: var(--success-bg);
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .dash-meta {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--accent);
+  white-space: nowrap;
 }
 
 .dash-chart {
   flex: 1;
   min-height: 0;
+  padding-top: 2px;
 }
 
 .dash-chart :deep(.chart-canvas) {
@@ -301,6 +416,13 @@ const activities = [
   padding: 6px 8px;
   background: var(--admin-bg);
   border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.dash-activity li:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
 }
 
 .dash-activity-dot {
@@ -309,6 +431,7 @@ const activities = [
   margin-top: 5px;
   border-radius: 50%;
   background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
   flex-shrink: 0;
 }
 
@@ -346,6 +469,13 @@ const activities = [
   padding: 6px 8px;
   background: var(--admin-bg);
   border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.dash-order:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
 }
 
 .dash-order-main {

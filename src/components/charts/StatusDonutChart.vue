@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { ChartConfiguration } from 'chart.js'
+import type { ChartConfiguration, Plugin } from 'chart.js'
 import ChartCanvas from './ChartCanvas.vue'
-import { chartPlugins, getChartColors } from '../../composables/useChartTheme'
+import { chartAnimations, chartPlugins, getChartColors } from '../../composables/useChartTheme'
 
 const { t, locale } = useI18n()
 
@@ -20,6 +20,34 @@ const props = withDefaults(
 
 const statusLabelKeys = ['status.new', 'common.inProgress', 'status.done', 'status.cancelled'] as const
 
+const total = computed(() => props.values.reduce((sum, v) => sum + v, 0))
+
+const centerPlugin = computed<Plugin<'doughnut'>>(() => ({
+  id: 'donutCenter',
+  beforeDraw(chart) {
+    if (!props.compact) return
+
+    const { ctx, chartArea } = chart
+    if (!chartArea) return
+
+    const centerX = (chartArea.left + chartArea.right) / 2
+    const centerY = (chartArea.top + chartArea.bottom) / 2
+
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+
+    ctx.font = '700 22px Inter, sans-serif'
+    ctx.fillStyle = getChartColors().textH
+    ctx.fillText(String(total.value), centerX, centerY - 6)
+
+    ctx.font = '500 10px Inter, sans-serif'
+    ctx.fillStyle = getChartColors().text
+    ctx.fillText(t('common.total'), centerX, centerY + 14)
+    ctx.restore()
+  },
+}))
+
 const config = computed(() => {
   const colors = getChartColors()
   const labels = statusLabelKeys.map((key) => t(key))
@@ -31,30 +59,44 @@ const config = computed(() => {
       datasets: [
         {
           data: props.values,
-          backgroundColor: colors.palette.slice(0, labels.length),
-          borderWidth: 0,
-          hoverOffset: 8,
-          spacing: 3,
+          backgroundColor: colors.status,
+          borderWidth: 3,
+          borderColor: colors.adminBg,
+          hoverOffset: 12,
+          hoverBorderWidth: 0,
+          spacing: 2,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      cutout: props.compact ? '62%' : '68%',
+      animation: chartAnimations(),
+      cutout: props.compact ? '72%' : '68%',
       plugins: {
         ...chartPlugins(),
         legend: {
           ...chartPlugins()?.legend,
           position: props.compact ? 'right' : 'bottom',
           labels: {
-            boxWidth: props.compact ? 8 : 12,
-            padding: props.compact ? 8 : 16,
-            font: { size: props.compact ? 10 : 12 },
+            boxWidth: props.compact ? 7 : 10,
+            padding: props.compact ? 10 : 16,
+            font: { size: props.compact ? 10 : 12, weight: 500 },
+          },
+        },
+        tooltip: {
+          ...chartPlugins()?.tooltip,
+          callbacks: {
+            label: (ctx) => {
+              const value = ctx.parsed
+              const pct = total.value ? Math.round((value / total.value) * 100) : 0
+              return `${ctx.label}: ${value} (${pct}%)`
+            },
           },
         },
       },
     },
+    plugins: props.compact ? [centerPlugin.value] : [],
   } as ChartConfiguration
 })
 </script>
@@ -70,5 +112,6 @@ const config = computed(() => {
 
 .donut-chart--compact :deep(.chart-canvas) {
   min-height: 0;
+  filter: drop-shadow(0 4px 14px rgba(99, 102, 241, 0.1));
 }
 </style>

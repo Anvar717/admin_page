@@ -7,125 +7,356 @@ import AppIcon, { type IconName } from '../../components/icons/AppIcon.vue'
 
 const { t } = useI18n()
 
-const metrics: { labelKey: string; value: string; icon: IconName }[] = [
-  { labelKey: 'analytics.conversion', value: '3.2%', icon: 'conversion' },
-  { labelKey: 'analytics.avgOrder', value: `785,000 ${t('common.currency')}`, icon: 'cart' },
-  { labelKey: 'analytics.returnRate', value: '24%', icon: 'repeat' },
-  { labelKey: 'analytics.newCustomers', value: '156', icon: 'sparkles' },
+const metrics: { labelKey: string; value: string; change: string; up: boolean; icon: IconName }[] = [
+  { labelKey: 'analytics.conversion', value: '3.2%', change: '+0.8%', up: true, icon: 'conversion' },
+  { labelKey: 'analytics.avgOrder', value: `785K`, change: '+5%', up: true, icon: 'cart' },
+  { labelKey: 'analytics.returnRate', value: '24%', change: '-2%', up: false, icon: 'repeat' },
+  { labelKey: 'analytics.newCustomers', value: '156', change: '+18%', up: true, icon: 'sparkles' },
 ]
 
 const topProducts = [
   { name: 'Smartfon X1', sales: 124, revenue: '558M' },
   { name: 'Noutbuk Pro', sales: 89, revenue: '1.2B' },
   { name: 'Naushnik Z', sales: 256, revenue: '82M' },
-  { name: 'Planshet Air', sales: 67, revenue: '596M' },
 ]
 </script>
 
 <template>
-  <div class="admin-page">
-    <section class="ui-stat-grid">
-      <article v-for="metric in metrics" :key="metric.labelKey" class="ui-stat-card">
-        <div class="ui-stat-top">
-          <p class="ui-stat-label">{{ t(metric.labelKey) }}</p>
-          <span class="ui-stat-icon">
-            <AppIcon :name="metric.icon" :size="20" />
-          </span>
+  <div class="admin-page analytics-page">
+    <section class="dash-stats">
+      <article v-for="metric in metrics" :key="metric.labelKey" class="dash-stat">
+        <span class="dash-stat-icon">
+          <AppIcon :name="metric.icon" :size="16" />
+        </span>
+        <div class="dash-stat-body">
+          <p class="dash-stat-label">{{ t(metric.labelKey) }}</p>
+          <div class="dash-stat-row">
+            <strong>{{ metric.value }}</strong>
+            <span class="dash-stat-change" :class="{ down: !metric.up }">{{ metric.change }}</span>
+          </div>
         </div>
-        <h2 class="ui-stat-value stat-value-sm">{{ metric.value }}</h2>
       </article>
     </section>
 
-    <article class="ui-card chart-card">
-      <div class="ui-card-body">
-        <div class="chart-card-header">
-          <div>
-            <h3>{{ t('analytics.conversionVisits') }}</h3>
-            <p>{{ t('analytics.monthlyDynamics') }}</p>
+    <section class="dash-grid">
+      <article class="dash-panel dash-panel--wide dash-panel--chart">
+        <div class="dash-panel-glow dash-panel-glow--purple" />
+        <div class="dash-panel-head">
+          <div class="dash-panel-title">
+            <span class="dash-panel-icon dash-panel-icon--conversion">
+              <AppIcon name="conversion" :size="14" />
+            </span>
+            <div>
+              <h3>{{ t('analytics.conversionVisits') }}</h3>
+              <p>{{ t('analytics.monthlyDynamics') }}</p>
+            </div>
           </div>
+          <span class="dash-badge">3.2%</span>
         </div>
-        <ConversionLineChart />
-      </div>
-    </article>
+        <div class="dash-chart">
+          <ConversionLineChart />
+        </div>
+      </article>
 
-    <section class="charts-grid">
-      <article class="ui-card chart-card">
-        <div class="ui-card-body">
-          <div class="chart-card-header">
+      <article class="dash-panel dash-panel--chart">
+        <div class="dash-panel-glow" />
+        <div class="dash-panel-head">
+          <div class="dash-panel-title">
+            <span class="dash-panel-icon dash-panel-icon--traffic">
+              <AppIcon name="sessions" :size="14" />
+            </span>
             <div>
               <h3>{{ t('analytics.trafficSources') }}</h3>
               <p>{{ t('analytics.trafficDesc') }}</p>
             </div>
           </div>
-          <TrafficDonutChart />
+        </div>
+        <div class="dash-chart dash-chart--donut">
+          <TrafficDonutChart compact />
         </div>
       </article>
 
-      <article class="ui-card chart-card">
-        <div class="ui-card-body">
-          <div class="chart-card-header">
+      <article class="dash-panel dash-panel--chart">
+        <div class="dash-panel-glow dash-panel-glow--blue" />
+        <div class="dash-panel-head">
+          <div class="dash-panel-title">
+            <span class="dash-panel-icon dash-panel-icon--products">
+              <AppIcon name="orders" :size="14" />
+            </span>
             <div>
               <h3>{{ t('analytics.topProducts') }}</h3>
               <p>{{ t('analytics.salesBy') }}</p>
             </div>
           </div>
+        </div>
+        <div class="dash-chart">
           <ProductsBarChart />
         </div>
       </article>
-    </section>
 
-    <article class="ui-card">
-      <div class="ui-card-body">
-        <div class="ui-card-header">
-          <h3>{{ t('analytics.productRanking') }}</h3>
+      <article class="dash-panel dash-panel--split">
+        <div class="dash-split-col dash-split-col--full">
+          <div class="dash-panel-head">
+            <div class="dash-panel-title">
+              <span class="dash-panel-icon dash-panel-icon--ranking">
+                <AppIcon name="sparkles" :size="14" />
+              </span>
+              <h3>{{ t('analytics.productRanking') }}</h3>
+            </div>
+          </div>
+          <ul class="product-list">
+            <li v-for="(product, index) in topProducts" :key="product.name">
+              <span class="rank">{{ index + 1 }}</span>
+              <div class="product-info">
+                <strong>{{ product.name }}</strong>
+                <span>{{ product.sales }} {{ t('analytics.salesUnit') }} · {{ product.revenue }}</span>
+                <div class="product-bar">
+                  <div :style="{ width: `${(product.sales / 256) * 100}%` }" />
+                </div>
+              </div>
+              <span class="product-sales">{{ product.sales }}</span>
+            </li>
+          </ul>
         </div>
-        <ul class="product-list">
-          <li v-for="(product, index) in topProducts" :key="product.name">
-            <span class="rank">{{ index + 1 }}</span>
-            <div class="product-info">
-              <strong>{{ product.name }}</strong>
-              <span>{{ product.sales }} {{ t('analytics.salesUnit') }} · {{ product.revenue }}</span>
-            </div>
-            <div class="product-bar">
-              <div :style="{ width: `${(product.sales / 256) * 100}%` }" />
-            </div>
-          </li>
-        </ul>
-      </div>
-    </article>
+      </article>
+    </section>
   </div>
 </template>
 
 <style scoped>
-.stat-value-sm {
-  font-size: 22px !important;
+.analytics-page {
+  gap: 10px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.chart-card-header {
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.dash-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.dash-stat:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.dash-stat-icon {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+}
+
+.dash-stat-body {
+  min-width: 0;
+}
+
+.dash-stat-label {
+  margin: 0 0 2px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-stat-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.dash-stat-row strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-h);
+  letter-spacing: -0.02em;
+}
+
+.dash-stat-change {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.dash-stat-change.down {
+  color: var(--danger);
+}
+
+.dash-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+}
+
+.dash-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.dash-panel--chart {
+  background: linear-gradient(180deg, var(--bg) 0%, rgba(99, 102, 241, 0.03) 100%);
+}
+
+.dash-panel-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient);
+  opacity: 0.85;
+}
+
+.dash-panel-glow--purple {
+  background: linear-gradient(90deg, #8b5cf6, #a855f7);
+}
+
+.dash-panel-glow--blue {
+  background: linear-gradient(90deg, #6366f1, #818cf8);
+}
+
+.dash-panel--wide {
+  grid-column: 1 / 3;
+}
+
+.dash-panel--split {
+  grid-column: 2 / 4;
+  padding: 10px 12px;
+}
+
+.dash-split-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.dash-split-col--full {
+  width: 100%;
+}
+
+.dash-panel-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
 }
 
-.chart-card-header h3 {
-  margin: 0 0 4px;
-  font-size: 15px;
+.dash-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.dash-panel-title h3 {
+  margin: 0;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-h);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.chart-card-header p {
-  margin: 0;
-  font-size: 12px;
+.dash-panel-title p {
+  margin: 2px 0 0;
+  font-size: 10px;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.charts-grid {
+.dash-panel-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 8px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  place-items: center;
+}
+
+.dash-panel-icon--conversion {
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+}
+
+.dash-panel-icon--traffic {
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+}
+
+.dash-panel-icon--products {
+  background: rgba(168, 85, 247, 0.12);
+  color: #a855f7;
+}
+
+.dash-panel-icon--ranking {
+  background: rgba(236, 72, 153, 0.12);
+  color: #ec4899;
+}
+
+.dash-badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.12);
+  flex-shrink: 0;
+}
+
+.dash-chart {
+  flex: 1;
+  min-height: 0;
+  padding-top: 2px;
+}
+
+.dash-chart :deep(.chart-canvas) {
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.dash-chart--donut :deep(.chart-canvas) {
+  min-height: 0 !important;
 }
 
 .product-list {
@@ -134,50 +365,64 @@ const topProducts = [
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  justify-content: space-between;
 }
 
 .product-list li {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
+  gap: 10px;
+  flex: 1;
+  padding: 8px 10px;
   background: var(--admin-bg);
-  border-radius: var(--radius-md);
-  transition: background var(--transition);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: border-color var(--transition), background var(--transition);
 }
 
 .product-list li:hover {
   background: var(--accent-bg);
+  border-color: var(--accent-border);
 }
 
 .rank {
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: var(--gradient);
   color: #fff;
   display: grid;
   place-items: center;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
+}
+
+.product-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .product-info strong {
   display: block;
-  font-size: 14px;
+  font-size: 11px;
   color: var(--text-h);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .product-info span {
-  font-size: 12px;
+  font-size: 10px;
   color: var(--text);
 }
 
 .product-bar {
-  width: 80px;
-  height: 6px;
+  height: 4px;
+  margin-top: 5px;
   background: var(--border);
   border-radius: 999px;
   overflow: hidden;
@@ -190,18 +435,50 @@ const topProducts = [
   transition: width 0.6s ease;
 }
 
-@media (max-width: 1024px) {
-  .charts-grid {
+.product-sales {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+@media (max-width: 1200px) {
+  .analytics-page {
+    height: auto;
+    min-height: 600px;
+    overflow: visible;
+  }
+
+  .dash-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr auto;
+  }
+
+  .dash-panel--wide {
+    grid-column: 1 / -1;
+  }
+
+  .dash-panel--split {
+    grid-column: 1 / -1;
+  }
+
+  .dash-chart :deep(.chart-canvas) {
+    min-height: 140px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .dash-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dash-grid {
     grid-template-columns: 1fr;
   }
 
-  .product-list li {
-    grid-template-columns: auto 1fr;
-  }
-
-  .product-bar {
-    grid-column: 2;
-    width: 100%;
+  .dash-panel--wide,
+  .dash-panel--split {
+    grid-column: 1;
   }
 }
 </style>
