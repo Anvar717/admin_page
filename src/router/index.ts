@@ -35,6 +35,11 @@ const router = createRouter({
           component: () => import('../views/admin/OrdersView.vue'),
         },
         {
+          path: 'orders/create',
+          name: 'order-create',
+          component: () => import('../views/admin/OrderCreateView.vue'),
+        },
+        {
           path: 'analytics',
           name: 'analytics',
           component: () => import('../views/admin/AnalyticsView.vue'),

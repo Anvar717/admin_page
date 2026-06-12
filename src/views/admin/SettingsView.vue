@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import AppIcon from '../../components/icons/AppIcon.vue'
 
 const siteName = ref('Admin Panel')
 const email = ref('admin@example.com')
@@ -55,7 +56,10 @@ const darkMode = ref(false)
     <article class="ui-card danger-card">
       <div class="ui-card-body">
         <div class="ui-card-header">
-          <h3>⚠ Xavfli zona</h3>
+          <h3 class="danger-title">
+            <AppIcon name="alert-triangle" :size="18" />
+            Xavfli zona
+          </h3>
         </div>
         <p>Hisob ma'lumotlarini o'chirish yoki tizimni qayta tiklash.</p>
         <button type="button" class="danger-btn">Ma'lumotlarni tozalash</button>
@@ -153,6 +157,13 @@ const darkMode = ref(false)
 
 .danger-card {
   border-color: rgba(239, 68, 68, 0.3);
+}
+
+.danger-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--danger) !important;
 }
 
 .danger-card p {

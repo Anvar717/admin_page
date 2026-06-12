@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppIcon from '../../components/icons/AppIcon.vue'
+
 const users = [
   { id: 1, name: 'Ali Valiyev', email: 'ali@mail.com', role: 'Foydalanuvchi', status: 'Faol' },
   { id: 2, name: 'Dilnoza Karimova', email: 'dilnoza@mail.com', role: 'Moderator', status: 'Faol' },
@@ -12,7 +14,10 @@ const users = [
   <div class="admin-page">
     <div class="ui-toolbar">
       <input type="search" placeholder="Foydalanuvchi qidirish..." class="ui-input" />
-      <button type="button" class="ui-btn ui-btn-primary">+ Yangi foydalanuvchi</button>
+      <button type="button" class="ui-btn ui-btn-primary">
+        <AppIcon name="plus" :size="16" />
+        Yangi foydalanuvchi
+      </button>
     </div>
 
     <article class="ui-card ui-card-flush">

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import AppIcon, { type IconName } from '../icons/AppIcon.vue'
 
 const router = useRouter()
 
@@ -11,7 +12,7 @@ defineEmits<{
   navigate: []
 }>()
 
-const menuItems = [
+const menuItems: { name: string; label: string; icon: IconName }[] = [
   { name: 'overview', label: 'Dashboard', icon: 'dashboard' },
   { name: 'users', label: 'Foydalanuvchilar', icon: 'users' },
   { name: 'orders', label: 'Buyurtmalar', icon: 'orders' },
@@ -23,7 +24,9 @@ const menuItems = [
 <template>
   <aside class="sidebar" :class="{ open }">
     <div class="sidebar-brand">
-      <div class="brand-icon">A</div>
+      <div class="brand-icon">
+        <AppIcon name="shield" :size="22" :stroke-width="2.2" />
+      </div>
       <div>
         <strong>Admin Panel</strong>
         <span>Boshqaruv tizimi</span>
@@ -46,7 +49,7 @@ const menuItems = [
           :class="{ active: isActive }"
           @click.prevent="router.push({ name: item.name }); $emit('navigate')"
         >
-          <span class="nav-icon" :data-icon="item.icon" />
+          <AppIcon :name="item.icon" :size="18" class="nav-icon" />
           <span>{{ item.label }}</span>
           <span v-if="isActive" class="active-dot" />
         </a>
@@ -55,8 +58,11 @@ const menuItems = [
 
     <div class="sidebar-footer">
       <div class="footer-card">
-        <p>Admin v1.0</p>
-        <span>Barcha tizimlar ishlayapti</span>
+        <AppIcon name="activity" :size="14" class="footer-icon" />
+        <div>
+          <p>Admin v1.0</p>
+          <span>Barcha tizimlar ishlayapti</span>
+        </div>
       </div>
     </div>
   </aside>
@@ -88,8 +94,6 @@ const menuItems = [
   color: #fff;
   display: grid;
   place-items: center;
-  font-weight: 700;
-  font-size: 18px;
   box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
 }
 
@@ -146,6 +150,10 @@ const menuItems = [
   color: #a5b4fc;
 }
 
+.nav-icon {
+  opacity: 0.9;
+}
+
 .active-dot {
   margin-left: auto;
   width: 6px;
@@ -155,45 +163,23 @@ const menuItems = [
   box-shadow: 0 0 8px var(--accent-light);
 }
 
-.nav-icon {
-  width: 20px;
-  height: 20px;
-  opacity: 0.9;
-  background: currentColor;
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: center;
-}
-
-.nav-icon[data-icon='dashboard'] {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Crect x='3' y='3' width='7' height='7' rx='1'/%3E%3Crect x='14' y='3' width='7' height='7' rx='1'/%3E%3Crect x='3' y='14' width='7' height='7' rx='1'/%3E%3Crect x='14' y='14' width='7' height='7' rx='1'/%3E%3C/svg%3E");
-}
-
-.nav-icon[data-icon='users'] {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E");
-}
-
-.nav-icon[data-icon='orders'] {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z'/%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M16 10a4 4 0 0 1-8 0'/%3E%3C/svg%3E");
-}
-
-.nav-icon[data-icon='analytics'] {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='m19 9-5 5-4-4-3 3'/%3E%3C/svg%3E");
-}
-
-.nav-icon[data-icon='settings'] {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42'/%3E%3C/svg%3E");
-}
-
 .sidebar-footer {
   padding: 16px;
 }
 
 .footer-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--sidebar-border);
   border-radius: var(--radius-md);
+}
+
+.footer-icon {
+  color: #34d399;
+  margin-top: 2px;
 }
 
 .footer-card p {

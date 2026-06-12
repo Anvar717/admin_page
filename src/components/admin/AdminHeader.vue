@@ -2,6 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { useAuth } from '../../composables/useAuth'
+import AppIcon from '../icons/AppIcon.vue'
 
 defineEmits<{
   toggleSidebar: []
@@ -16,6 +17,7 @@ const pageTitle = computed(() => {
     overview: 'Dashboard',
     users: 'Foydalanuvchilar',
     orders: 'Buyurtmalar',
+    'order-create': 'Yangi buyurtma',
     analytics: 'Analitika',
     settings: 'Sozlamalar',
   }
@@ -33,9 +35,7 @@ function handleLogout() {
   <header class="admin-header">
     <div class="header-left">
       <button type="button" class="menu-btn" aria-label="Menyu" @click="$emit('toggleSidebar')">
-        <span />
-        <span />
-        <span />
+        <AppIcon name="menu" :size="18" />
       </button>
       <div class="title-block">
         <h1>{{ pageTitle }}</h1>
@@ -45,19 +45,21 @@ function handleLogout() {
 
     <div class="header-center">
       <div class="search-box">
-        <span class="search-icon">🔍</span>
+        <AppIcon name="search" :size="16" class="search-icon" />
         <input type="search" placeholder="Qidirish..." />
       </div>
     </div>
 
     <div class="header-right">
       <button type="button" class="icon-btn" aria-label="Bildirishnomalar">
-        🔔
+        <AppIcon name="bell" :size="18" />
         <span class="notif-dot" />
       </button>
 
       <div class="user-menu">
-        <span class="avatar">A</span>
+        <span class="avatar">
+          <AppIcon name="user" :size="16" />
+        </span>
         <div class="user-info">
           <strong>admin</strong>
           <span>Administrator</span>
@@ -65,7 +67,8 @@ function handleLogout() {
       </div>
 
       <button type="button" class="logout-btn" @click="handleLogout">
-        Chiqish
+        <AppIcon name="logout" :size="16" />
+        <span class="logout-text">Chiqish</span>
       </button>
     </div>
   </header>
@@ -112,21 +115,14 @@ function handleLogout() {
 
 .menu-btn {
   display: none;
-  flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  justify-content: center;
   padding: 10px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--bg);
+  color: var(--text-h);
   cursor: pointer;
-}
-
-.menu-btn span {
-  display: block;
-  width: 18px;
-  height: 2px;
-  background: var(--text-h);
-  border-radius: 1px;
 }
 
 .header-center {
@@ -143,13 +139,14 @@ function handleLogout() {
 .search-icon {
   position: absolute;
   left: 14px;
-  font-size: 14px;
-  opacity: 0.5;
+  color: var(--text);
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .search-box input {
   width: 100%;
-  padding: 10px 14px 10px 40px;
+  padding: 10px 14px 10px 42px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--admin-bg);
@@ -179,14 +176,15 @@ function handleLogout() {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--bg);
-  font-size: 16px;
+  color: var(--text-h);
   display: grid;
   place-items: center;
-  transition: background var(--transition);
+  transition: background var(--transition), color var(--transition);
 }
 
 .icon-btn:hover {
   background: var(--accent-bg);
+  color: var(--accent);
 }
 
 .notif-dot {
@@ -218,8 +216,6 @@ function handleLogout() {
   color: #fff;
   display: grid;
   place-items: center;
-  font-weight: 600;
-  font-size: 13px;
 }
 
 .user-info strong {
@@ -234,6 +230,9 @@ function handleLogout() {
 }
 
 .logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font: inherit;
   padding: 9px 16px;
   border: 1px solid var(--border);
@@ -254,7 +253,7 @@ function handleLogout() {
 
 @media (max-width: 1024px) {
   .menu-btn {
-    display: flex;
+    display: inline-flex;
   }
 
   .header-center {
@@ -276,6 +275,10 @@ function handleLogout() {
   }
 
   .logout-btn {
+    padding: 9px 12px;
+  }
+
+  .logout-text {
     display: none;
   }
 }

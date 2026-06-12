@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { STATIC_LOGIN, STATIC_PASSWORD, useAuth } from '../composables/useAuth'
+import AppIcon from '../components/icons/AppIcon.vue'
 
 const router = useRouter()
 const { login } = useAuth()
@@ -33,13 +34,15 @@ async function handleSubmit() {
   <div class="login-page">
     <div class="login-visual">
       <div class="visual-content">
-        <div class="visual-logo">A</div>
+        <div class="visual-logo">
+          <AppIcon name="shield" :size="28" :stroke-width="2.2" />
+        </div>
         <h2>Admin boshqaruv tizimi</h2>
         <p>Ma'lumotlaringizni xavfsiz boshqaring va real vaqtda kuzating</p>
         <ul class="features">
-          <li>Real vaqt statistikasi</li>
-          <li>Foydalanuvchilar boshqaruvi</li>
-          <li>Buyurtmalar monitoringi</li>
+          <li><AppIcon name="chart" :size="14" /> Real vaqt statistikasi</li>
+          <li><AppIcon name="users" :size="14" /> Foydalanuvchilar boshqaruvi</li>
+          <li><AppIcon name="orders" :size="14" /> Buyurtmalar monitoringi</li>
         </ul>
       </div>
     </div>
@@ -55,7 +58,7 @@ async function handleSubmit() {
           <label class="field">
             <span>Login</span>
             <div class="input-wrap">
-              <span class="input-icon">👤</span>
+              <AppIcon name="user" :size="16" class="input-icon" />
               <input
                 v-model="username"
                 type="text"
@@ -69,7 +72,7 @@ async function handleSubmit() {
           <label class="field">
             <span>Parol</span>
             <div class="input-wrap">
-              <span class="input-icon">🔒</span>
+              <AppIcon name="lock" :size="16" class="input-icon" />
               <input
                 v-model="password"
                 :type="showPassword ? 'text' : 'password'"
@@ -82,13 +85,13 @@ async function handleSubmit() {
                 class="toggle-pass"
                 @click="showPassword = !showPassword"
               >
-                {{ showPassword ? '🙈' : '👁' }}
+                <AppIcon :name="showPassword ? 'eye-off' : 'eye'" :size="16" />
               </button>
             </div>
           </label>
 
           <p v-if="error" class="error">
-            <span>⚠</span> {{ error }}
+            <AppIcon name="alert" :size="16" /> {{ error }}
           </p>
 
           <button type="submit" class="submit-btn" :disabled="loading">
@@ -161,8 +164,7 @@ async function handleSubmit() {
   backdrop-filter: blur(8px);
   display: grid;
   place-items: center;
-  font-size: 24px;
-  font-weight: 700;
+  color: #fff;
   margin-bottom: 28px;
 }
 
@@ -197,15 +199,12 @@ async function handleSubmit() {
   opacity: 0.9;
 }
 
-.features li::before {
-  content: '✓';
+.features li :deep(svg) {
   width: 22px;
   height: 22px;
+  padding: 4px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
-  display: grid;
-  place-items: center;
-  font-size: 11px;
   flex-shrink: 0;
 }
 
@@ -264,7 +263,7 @@ async function handleSubmit() {
 .input-icon {
   position: absolute;
   left: 14px;
-  font-size: 14px;
+  color: var(--text);
   opacity: 0.5;
   pointer-events: none;
 }
@@ -292,9 +291,11 @@ async function handleSubmit() {
   right: 10px;
   border: none;
   background: none;
-  font-size: 14px;
+  color: var(--text);
   opacity: 0.6;
   padding: 4px;
+  display: grid;
+  place-items: center;
 }
 
 .toggle-pass:hover {

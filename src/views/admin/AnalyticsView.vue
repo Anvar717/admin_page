@@ -2,12 +2,13 @@
 import TrafficDonutChart from '../../components/charts/TrafficDonutChart.vue'
 import ProductsBarChart from '../../components/charts/ProductsBarChart.vue'
 import ConversionLineChart from '../../components/charts/ConversionLineChart.vue'
+import AppIcon, { type IconName } from '../../components/icons/AppIcon.vue'
 
-const metrics = [
-  { label: 'Konversiya', value: '3.2%', icon: '📈' },
-  { label: "O'rtacha buyurtma", value: "785,000 so'm", icon: '🛒' },
-  { label: 'Qaytish foizi', value: '24%', icon: '🔁' },
-  { label: 'Yangi mijozlar', value: '156', icon: '✨' },
+const metrics: { label: string; value: string; icon: IconName }[] = [
+  { label: 'Konversiya', value: '3.2%', icon: 'conversion' },
+  { label: "O'rtacha buyurtma", value: "785,000 so'm", icon: 'cart' },
+  { label: 'Qaytish foizi', value: '24%', icon: 'repeat' },
+  { label: 'Yangi mijozlar', value: '156', icon: 'sparkles' },
 ]
 
 const topProducts = [
@@ -24,7 +25,9 @@ const topProducts = [
       <article v-for="metric in metrics" :key="metric.label" class="ui-stat-card">
         <div class="ui-stat-top">
           <p class="ui-stat-label">{{ metric.label }}</p>
-          <span class="ui-stat-icon">{{ metric.icon }}</span>
+          <span class="ui-stat-icon">
+            <AppIcon :name="metric.icon" :size="20" />
+          </span>
         </div>
         <h2 class="ui-stat-value stat-value-sm">{{ metric.value }}</h2>
       </article>

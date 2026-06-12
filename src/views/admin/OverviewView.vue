@@ -2,12 +2,13 @@
 import RevenueAreaChart from '../../components/charts/RevenueAreaChart.vue'
 import OrdersBarChart from '../../components/charts/OrdersBarChart.vue'
 import StatusDonutChart from '../../components/charts/StatusDonutChart.vue'
+import AppIcon, { type IconName } from '../../components/icons/AppIcon.vue'
 
-const stats = [
-  { label: 'Jami foydalanuvchilar', value: '1,248', change: '+12%', up: true, icon: '👥' },
-  { label: 'Buyurtmalar', value: '356', change: '+8%', up: true, icon: '📦' },
-  { label: 'Daromad', value: '24.5M', change: '+23%', up: true, icon: '💰' },
-  { label: 'Faol sessiyalar', value: '89', change: '-3%', up: false, icon: '⚡' },
+const stats: { label: string; value: string; change: string; up: boolean; icon: IconName }[] = [
+  { label: 'Jami foydalanuvchilar', value: '1,248', change: '+12%', up: true, icon: 'users' },
+  { label: 'Buyurtmalar', value: '356', change: '+8%', up: true, icon: 'orders' },
+  { label: 'Daromad', value: '24.5M', change: '+23%', up: true, icon: 'revenue' },
+  { label: 'Faol sessiyalar', value: '89', change: '-3%', up: false, icon: 'sessions' },
 ]
 
 const recentOrders = [
@@ -31,7 +32,9 @@ const activities = [
       <article v-for="stat in stats" :key="stat.label" class="ui-stat-card">
         <div class="ui-stat-top">
           <p class="ui-stat-label">{{ stat.label }}</p>
-          <span class="ui-stat-icon">{{ stat.icon }}</span>
+          <span class="ui-stat-icon">
+            <AppIcon :name="stat.icon" :size="20" />
+          </span>
         </div>
         <h2 class="ui-stat-value">{{ stat.value }}</h2>
         <span class="ui-stat-change" :class="{ down: !stat.up }">
