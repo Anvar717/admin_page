@@ -66,6 +66,7 @@ const chartBars = [40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88]
               <span class="ui-activity-dot" />
               {{ item }}
             </div>
+            <div></div>
           </div>
         </div>
       </article>
