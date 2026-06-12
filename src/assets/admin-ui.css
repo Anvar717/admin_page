@@ -348,27 +348,17 @@
   flex-shrink: 0;
 }
 
-.ui-chart {
+.chart-card {
+  overflow: hidden;
+}
+
+.chart-card--large .ui-card-body {
+  min-height: 360px;
+}
+
+.chart-card .ui-card-body {
   display: flex;
-  align-items: flex-end;
-  gap: 10px;
-  height: 220px;
-  padding-top: 12px;
-}
-
-.ui-chart-bar {
-  flex: 1;
-  background: var(--gradient);
-  border-radius: 8px 8px 2px 2px;
-  min-height: 24px;
-  opacity: 0.85;
-  transition: opacity var(--transition), transform var(--transition);
-}
-
-.ui-chart-bar:hover {
-  opacity: 1;
-  transform: scaleY(1.03);
-  transform-origin: bottom;
+  flex-direction: column;
 }
 
 @media (max-width: 1200px) {

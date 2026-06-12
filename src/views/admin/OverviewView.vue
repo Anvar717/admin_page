@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import RevenueAreaChart from '../../components/charts/RevenueAreaChart.vue'
+import OrdersBarChart from '../../components/charts/OrdersBarChart.vue'
+import StatusDonutChart from '../../components/charts/StatusDonutChart.vue'
+
 const stats = [
   { label: 'Jami foydalanuvchilar', value: '1,248', change: '+12%', up: true, icon: '👥' },
   { label: 'Buyurtmalar', value: '356', change: '+8%', up: true, icon: '📦' },
@@ -14,13 +18,11 @@ const recentOrders = [
 ]
 
 const activities = [
-  'Yangi foydalanuvchi ro\'yxatdan o\'tdi',
-  '#1024 buyurtma yaratildi',
-  'Tizim yangilanishi muvaffaqiyatli',
-  '3 ta buyurtma yetkazildi',
+  { text: 'Yangi foydalanuvchi ro\'yxatdan o\'tdi', time: '5 daqiqa oldin' },
+  { text: '#1024 buyurtma yaratildi', time: '12 daqiqa oldin' },
+  { text: 'Tizim yangilanishi muvaffaqiyatli', time: '1 soat oldin' },
+  { text: '3 ta buyurtma yetkazildi', time: '2 soat oldin' },
 ]
-
-const chartBars = [40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88]
 </script>
 
 <template>
@@ -38,33 +40,62 @@ const chartBars = [40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88]
       </article>
     </section>
 
-    <section class="ui-grid-2-1">
-      <article class="ui-card">
+    <section class="charts-row-main">
+      <article class="ui-card chart-card chart-card--large">
         <div class="ui-card-body">
-          <div class="ui-card-header">
-            <h3>Oylik daromad</h3>
-            <span>2026 yil</span>
+          <div class="chart-card-header">
+            <div>
+              <h3>Oylik daromad</h3>
+              <p>Yillik daromad dinamikasi</p>
+            </div>
+            <span class="chart-badge">+23% o'sish</span>
           </div>
-          <div class="ui-chart">
-            <div
-              v-for="(height, index) in chartBars"
-              :key="index"
-              class="ui-chart-bar"
-              :style="{ height: `${height}%` }"
-            />
-          </div>
+          <RevenueAreaChart />
         </div>
       </article>
 
-      <article class="ui-card">
+      <article class="ui-card chart-card">
         <div class="ui-card-body">
-          <div class="ui-card-header">
-            <h3>So'nggi faoliyat</h3>
+          <div class="chart-card-header">
+            <div>
+              <h3>Buyurtma holati</h3>
+              <p>Joriy taqsimot</p>
+            </div>
+          </div>
+          <StatusDonutChart />
+        </div>
+      </article>
+    </section>
+
+    <section class="charts-row-secondary">
+      <article class="ui-card chart-card">
+        <div class="ui-card-body">
+          <div class="chart-card-header">
+            <div>
+              <h3>Haftalik buyurtmalar</h3>
+              <p>Kunlik statistika</p>
+            </div>
+            <span class="chart-total">Jami: 409</span>
+          </div>
+          <OrdersBarChart />
+        </div>
+      </article>
+
+      <article class="ui-card chart-card">
+        <div class="ui-card-body">
+          <div class="chart-card-header">
+            <div>
+              <h3>So'nggi faoliyat</h3>
+              <p>Real vaqt yangilanishlar</p>
+            </div>
           </div>
           <div class="activity-list">
-            <div v-for="(item, i) in activities" :key="i" class="ui-activity-item">
-              <span class="ui-activity-dot" />
-              {{ item }}
+            <div v-for="(item, i) in activities" :key="i" class="activity-item">
+              <span class="activity-dot" />
+              <div>
+                <p>{{ item.text }}</p>
+                <span>{{ item.time }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -106,9 +137,106 @@ const chartBars = [40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88]
 </template>
 
 <style scoped>
+.charts-row-main {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
+}
+
+.charts-row-secondary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chart-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.chart-card-header h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.chart-card-header p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.chart-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--success);
+  background: var(--success-bg);
+  white-space: nowrap;
+}
+
+.chart-total {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
 .activity-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--admin-bg);
+  border-radius: var(--radius-md);
+  transition: background var(--transition);
+}
+
+.activity-item:hover {
+  background: var(--accent-bg);
+}
+
+.activity-dot {
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+  flex-shrink: 0;
+}
+
+.activity-item p {
+  margin: 0 0 4px;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.activity-item span {
+  font-size: 12px;
+  color: var(--text);
+}
+
+@media (max-width: 1200px) {
+  .charts-row-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .charts-row-secondary {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

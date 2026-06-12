@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import TrafficDonutChart from '../../components/charts/TrafficDonutChart.vue'
+import ProductsBarChart from '../../components/charts/ProductsBarChart.vue'
+import ConversionLineChart from '../../components/charts/ConversionLineChart.vue'
+
 const metrics = [
   { label: 'Konversiya', value: '3.2%', icon: '📈' },
   { label: "O'rtacha buyurtma", value: "785,000 so'm", icon: '🛒' },
@@ -12,13 +16,6 @@ const topProducts = [
   { name: 'Naushnik Z', sales: 256, revenue: '82M' },
   { name: 'Planshet Air', sales: 67, revenue: '596M' },
 ]
-
-const traffic = [
-  { name: 'Google', percent: 45 },
-  { name: 'Instagram', percent: 30 },
-  { name: 'Telegram', percent: 15 },
-  { name: 'Boshqalar', percent: 10 },
-]
 </script>
 
 <template>
@@ -29,62 +26,114 @@ const traffic = [
           <p class="ui-stat-label">{{ metric.label }}</p>
           <span class="ui-stat-icon">{{ metric.icon }}</span>
         </div>
-        <h2 class="ui-stat-value" style="font-size: 22px">{{ metric.value }}</h2>
+        <h2 class="ui-stat-value stat-value-sm">{{ metric.value }}</h2>
       </article>
     </section>
 
-    <section class="ui-grid-2">
-      <article class="ui-card">
-        <div class="ui-card-body">
-          <div class="ui-card-header">
-            <h3>Trafik manbalari</h3>
+    <article class="ui-card chart-card">
+      <div class="ui-card-body">
+        <div class="chart-card-header">
+          <div>
+            <h3>Konversiya va tashriflar</h3>
+            <p>Oylik dinamika</p>
           </div>
-          <div class="ui-progress-list">
-            <div v-for="item in traffic" :key="item.name" class="progress-item">
-              <div class="ui-progress-header">
-                <span>{{ item.name }}</span>
-                <span>{{ item.percent }}%</span>
-              </div>
-              <div class="ui-progress-bar">
-                <div :style="{ width: `${item.percent}%` }" />
-              </div>
+        </div>
+        <ConversionLineChart />
+      </div>
+    </article>
+
+    <section class="charts-grid">
+      <article class="ui-card chart-card">
+        <div class="ui-card-body">
+          <div class="chart-card-header">
+            <div>
+              <h3>Trafik manbalari</h3>
+              <p>Foydalanuvchilar qayerdan keladi</p>
             </div>
           </div>
+          <TrafficDonutChart />
         </div>
       </article>
 
-      <article class="ui-card">
+      <article class="ui-card chart-card">
         <div class="ui-card-body">
-          <div class="ui-card-header">
-            <h3>Top mahsulotlar</h3>
+          <div class="chart-card-header">
+            <div>
+              <h3>Top mahsulotlar</h3>
+              <p>Sotuvlar bo'yicha</p>
+            </div>
           </div>
-          <ul class="product-list">
-            <li v-for="(product, index) in topProducts" :key="product.name">
-              <span class="rank">{{ index + 1 }}</span>
-              <div>
-                <strong>{{ product.name }}</strong>
-                <span>{{ product.sales }} ta sotuv · {{ product.revenue }}</span>
-              </div>
-            </li>
-          </ul>
+          <ProductsBarChart />
         </div>
       </article>
     </section>
+
+    <article class="ui-card">
+      <div class="ui-card-body">
+        <div class="ui-card-header">
+          <h3>Mahsulotlar reytingi</h3>
+        </div>
+        <ul class="product-list">
+          <li v-for="(product, index) in topProducts" :key="product.name">
+            <span class="rank">{{ index + 1 }}</span>
+            <div class="product-info">
+              <strong>{{ product.name }}</strong>
+              <span>{{ product.sales }} ta sotuv · {{ product.revenue }}</span>
+            </div>
+            <div class="product-bar">
+              <div :style="{ width: `${(product.sales / 256) * 100}%` }" />
+            </div>
+          </li>
+        </ul>
+      </div>
+    </article>
   </div>
 </template>
 
 <style scoped>
+.stat-value-sm {
+  font-size: 22px !important;
+}
+
+.chart-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.chart-card-header h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.chart-card-header p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
 .product-list {
   margin: 0;
   padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
 }
 
 .product-list li {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
@@ -107,17 +156,46 @@ const traffic = [
   place-items: center;
   font-size: 13px;
   font-weight: 700;
-  flex-shrink: 0;
 }
 
-.product-list strong {
+.product-info strong {
   display: block;
   font-size: 14px;
   color: var(--text-h);
 }
 
-.product-list span {
+.product-info span {
   font-size: 12px;
   color: var(--text);
+}
+
+.product-bar {
+  width: 80px;
+  height: 6px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.product-bar div {
+  height: 100%;
+  background: var(--gradient);
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+@media (max-width: 1024px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-list li {
+    grid-template-columns: auto 1fr;
+  }
+
+  .product-bar {
+    grid-column: 2;
+    width: 100%;
+  }
 }
 </style>
