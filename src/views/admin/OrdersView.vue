@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import AppIcon, { type IconName } from '../../components/icons/AppIcon.vue'
 import OrderEditModal, { type Order } from '../../components/admin/OrderEditModal.vue'
+import OrderViewModal from '../../components/admin/OrderViewModal.vue'
 import OrderDeleteModal from '../../components/admin/OrderDeleteModal.vue'
 import { statusClass, useOrders } from '../../composables/useOrders'
 
@@ -17,9 +18,16 @@ const miniStats: { labelKey: string; value: string; icon: IconName }[] = [
 ]
 
 const editModalOpen = ref(false)
+const viewModalOpen = ref(false)
 const deleteModalOpen = ref(false)
 const editingOrder = ref<Order | null>(null)
+const viewingOrder = ref<Order | null>(null)
 const deletingOrder = ref<Order | null>(null)
+
+function openView(order: Order) {
+  viewingOrder.value = { ...order }
+  viewModalOpen.value = true
+}
 
 function openEdit(order: Order) {
   editingOrder.value = { ...order }
@@ -34,6 +42,16 @@ function openDelete(order: Order) {
 function closeEditModal() {
   editModalOpen.value = false
   editingOrder.value = null
+}
+
+function closeViewModal() {
+  viewModalOpen.value = false
+  viewingOrder.value = null
+}
+
+function openEditFromView(order: Order) {
+  closeViewModal()
+  openEdit(order)
 }
 
 function closeDeleteModal() {
@@ -106,6 +124,10 @@ function confirmDelete() {
               </td>
               <td>
                 <div class="action-btns">
+                  <button type="button" class="action-btn view" @click="openView(order)">
+                    <AppIcon name="eye" :size="15" />
+                    {{ t('common.view') }}
+                  </button>
                   <button type="button" class="action-btn edit" @click="openEdit(order)">
                     <AppIcon name="edit" :size="15" />
                     {{ t('common.edit') }}
@@ -121,6 +143,13 @@ function confirmDelete() {
         </table>
       </div>
     </article>
+
+    <OrderViewModal
+      :open="viewModalOpen"
+      :order="viewingOrder"
+      @close="closeViewModal"
+      @edit="openEditFromView"
+    />
 
     <OrderEditModal
       :open="editModalOpen"
@@ -214,6 +243,18 @@ function confirmDelete() {
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition);
+}
+
+.action-btn.view {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-h);
+}
+
+.action-btn.view:hover {
+  background: var(--admin-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
 }
 
 .action-btn.edit {

@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppIcon from '../icons/AppIcon.vue'
 import { statusOptions, type Order, type OrderStatus } from '../../composables/useOrders'
+import { onAmountInput } from '../../utils/formatAmount'
 
 export type { Order }
 
@@ -54,6 +55,12 @@ function handleBackdropClick(event: MouseEvent) {
 function setStatus(status: OrderStatus) {
   form.value.status = status
 }
+
+function handleAmountInput(event: Event) {
+  onAmountInput(event, (value) => {
+    form.value.amount = value
+  })
+}
 </script>
 
 <template>
@@ -102,7 +109,14 @@ function setStatus(status: OrderStatus) {
               {{ t('orders.amount') }}
             </span>
             <div class="amount-input">
-              <input v-model="form.amount" type="text" :placeholder="t('orders.amountPlaceholder')" required />
+              <input
+                :value="form.amount"
+                type="text"
+                inputmode="numeric"
+                :placeholder="t('orders.amountPlaceholder')"
+                required
+                @input="handleAmountInput"
+              />
               <span class="currency">{{ t('common.currency') }}</span>
             </div>
           </label>

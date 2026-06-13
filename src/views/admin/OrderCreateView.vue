@@ -4,10 +4,13 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import AppIcon from '../../components/icons/AppIcon.vue'
 import { statusOptions, useOrders, type OrderStatus } from '../../composables/useOrders'
+import { onAmountInput } from '../../utils/formatAmount'
+import { useToast } from '../../composables/useToast'
 
 const router = useRouter()
 const { t } = useI18n()
 const { generateOrderId, addOrder } = useOrders()
+const { showToast } = useToast()
 
 const form = ref({
   customer: '',
@@ -30,6 +33,7 @@ function handleSubmit() {
     amount: form.value.amount.trim(),
     status: form.value.status,
   })
+  showToast(t('orders.createSuccess'))
   router.push({ name: 'orders' })
 }
 
@@ -39,6 +43,12 @@ function handleCancel() {
 
 function setStatus(status: OrderStatus) {
   form.value.status = status
+}
+
+function handleAmountInput(event: Event) {
+  onAmountInput(event, (value) => {
+    form.value.amount = value
+  })
 }
 </script>
 
@@ -105,10 +115,12 @@ function setStatus(status: OrderStatus) {
             </span>
             <div class="amount-input">
               <input
-                v-model="form.amount"
+                :value="form.amount"
                 type="text"
+                inputmode="numeric"
                 :placeholder="t('orders.amountPlaceholder')"
                 required
+                @input="handleAmountInput"
               />
               <span class="currency">{{ t('common.currency') }}</span>
             </div>

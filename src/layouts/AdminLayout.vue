@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import AdminSidebar from '../components/admin/AdminSidebar.vue'
 import AdminHeader from '../components/admin/AdminHeader.vue'
+import AppToast from '../components/AppToast.vue'
 
 const route = useRoute()
 const sidebarOpen = ref(false)
@@ -29,6 +30,7 @@ function closeSidebar() {
         <RouterView />
       </main>
     </div>
+    <AppToast />
   </div>
 </template>
 
